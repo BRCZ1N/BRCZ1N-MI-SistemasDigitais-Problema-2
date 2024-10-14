@@ -1,3 +1,21 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .data 
 
 DATA_A: @ Barramento “A” de dados do buffer de instrução.
