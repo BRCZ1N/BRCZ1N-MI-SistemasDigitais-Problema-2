@@ -1,160 +1,161 @@
-        .section .data
+.section .data
+LW_BRIDGE_BASE: .word 0x00000000        @ Defina o endereço base da ponte
+LW_BRIDGE_SPAN: .word 0x00000010        @ Defina o tamanho da memória da ponte
+DATA_A:         .word 0x00000020         @ Offset para DATA_A
+DATA_B:         .word 0x00000024         @ Offset para DATA_B
+START:          .word 0x00000028          @ Offset para START
+WRFULL:         .word 0x0000002C          @ Offset para WRFULL
 WBR:            .word 0b00              @ Código de operação WBR
 WBM:            .word 0b10              @ Código de operação WBM
 WSM:            .word 0b01              @ Código de operação WSM
 DP:             .word 0b11              @ Código de operação DP
 
-        .section .text
-        .global gpu_init
-        .global gpu_exit
-        .global send_instruction
-        .global instrucao_wbr
-        .global instrucao_wbr_sprite
-        .global instrucao_wbm
-        .global instrucao_wsm
-        .global instrucao_dp
+.section .text
+.global gpu_init
+.global gpu_exit
+.global send_instruction
+.global instrucao_wbr
+.global instrucao_wbm
+.global instrucao_wsm
+.global instrucao_dp
 
+.type gpu_init, %function
 gpu_init:
-        LDR     r0, ="/dev/mem"         @ Carrega o caminho do arquivo
-        MOV     r1, #0                   @ O_RDWR | O_SYNC
-        BL      open                     @ Abre /dev/mem
-        CMP     r0, #0                   @ Verifica se fd é -1
-        BEQ     .error_open              @ Se sim, vai para erro
-        LDR     r1, =LW_BRIDGE_BASE      @ Endereço base da memória
-        LDR     r2, =LW_BRIDGE_SPAN      @ Tamanho da memória
-        MOV     r3, #3                   @ PROT_READ | PROT_WRITE
-        MOV     r4, #1                   @ MAP_SHARED
-        BL      mmap                     @ Faz o mapeamento
-        CMP     r0, #0                   @ Verifica se LW_virtual é MAP_FAILED
-        BEQ     .error_mmap              @ Se sim, vai para erro
+    LDR     R0, ="/dev/mem"             @ Carrega o caminho do arquivo
+    MOV     R7, #5                       @ syscall: open
+    MOV     R1, #2                       @ O_RDWR
+    SWI     0                            @ Chama a syscall
+    MOV     R4, R0                       @ fd é retornado em R0
+    CMP     R0, #0                       @ Verifica se fd é -1
+    BLT     .error_open                  @ Se sim, vai para erro
 
-        @ Atribui os ponteiros às regiões de memória
-        LDR     r1, =DATA_A              @ Endereço de DATA_A
-        STR     r0, [r1]                 @ Armazena LW_virtual + DATA_A
-        LDR     r1, =DATA_B              @ Endereço de DATA_B
-        STR     r0, [r1]                 @ Armazena LW_virtual + DATA_B
-        LDR     r1, =START               @ Endereço de START
-        STR     r0, [r1]                 @ Armazena LW_virtual + START
-        LDR     r1, =WRFULL              @ Endereço de WRFULL
-        STR     r0, [r1]                 @ Armazena LW_virtual + WRFULL
+    LDR     R0, =LW_BRIDGE_BASE          @ Endereço base da memória
+    LDR     R1, =LW_BRIDGE_SPAN          @ Tamanho da memória
+    MOV     R2, #3                       @ PROT_READ | PROT_WRITE
+    MOV     R3, #1                       @ MAP_SHARED
+    MOV     R7, #192                     @ syscall: mmap
+    SWI     0                            @ Chama a syscall
+    MOV     R5, R0                       @ Armazena o ponteiro de memória virtual retornado por mmap
+    CMP     R5, #0                       @ Verifica se LW_virtual é MAP_FAILED
+    BEQ     .error_mmap                  @ Se sim, vai para erro
 
-        MOV     r0, #0                   @ Retorna 0 em caso de sucesso
-        BX      lr
+    @ Atribui os ponteiros às regiões de memória
+    LDR     R6, =DATA_A                  @ Offset de DATA_A
+    ADD     R6, R5, R6                   @ DATA_A_PTR = LW_virtual + DATA_A
+    STR     R6, [R4]                     @ Armazena o ponteiro em DATA_A_PTR
+
+    LDR     R6, =DATA_B                  @ Offset de DATA_B
+    ADD     R6, R5, R6                   @ DATA_B_PTR = LW_virtual + DATA_B
+    STR     R6, [R4, #4]                 @ Armazena o ponteiro em DATA_B_PTR (offset de 4 bytes)
+
+    LDR     R6, =START                   @ Offset de START
+    ADD     R6, R5, R6                   @ START_PTR = LW_virtual + START
+    STR     R6, [R4, #8]                 @ Armazena o ponteiro em START_PTR (offset de 8 bytes)
+
+    LDR     R6, =WRFULL                  @ Offset de WRFULL
+    ADD     R6, R5, R6                   @ WRFULL_PTR = LW_virtual + WRFULL
+    STR     R6, [R4, #12]                @ Armazena o ponteiro em WRFULL_PTR (offset de 12 bytes)
+
+    MOV     R0, #0                       @ Retorna 0 em caso de sucesso
+    BX      LR
 
 .error_open:
-        @ Lidar com erro ao abrir /dev/mem
-        MOV     r0, #-1                  @ Retorna -1
-        BX      lr
+    @ Lidar com erro ao abrir /dev/mem
+    MOV     R0, #-1                      @ Retorna -1
+    BX      LR
 
 .error_mmap:
-        @ Lidar com erro ao fazer mmap
-        MOV     r0, #-1                  @ Retorna -1
-        BX      lr
+    @ Lidar com erro ao fazer mmap
+    MOV     R0, #-1                      @ Retorna -1
+    BX      LR
 
+.type gpu_exit, %function
 gpu_exit:
-        LDR     r0, =LW_virtual          @ Carrega LW_virtual
-        LDR     r1, =LW_BRIDGE_SPAN      @ Carrega o tamanho do mapeamento
-        BL      munmap                   @ Desfaz o mapeamento
-        BX      lr
+    LDR     R0, =LW_virtual              @ Carrega LW_virtual
+    LDR     R1, =LW_BRIDGE_SPAN          @ Carrega o tamanho do mapeamento
+    MOV     R7, #91                      @ syscall: munmap
+    SWI     0                            @ Chama a syscall
+    BX      LR
 
+.type send_instruction, %function
 send_instruction:
-        MOV     r1, #0                   @ Desabilita o sinal de start
-        STR     r1, [START_PTR]          @ Escreve em START_PTR
-        LDR     r1, [r0]                 @ Carrega opcode_enderecamentos
-        STR     r1, [DATA_A_PTR]         @ Escreve opcode em DATA_A_PTR
-        LDR     r1, [r0, #4]             @ Carrega dados
-        STR     r1, [DATA_B_PTR]         @ Escreve dados em DATA_B_PTR
-        MOV     r1, #1                   @ Habilita o sinal de start
-        STR     r1, [START_PTR]          @ Escreve em START_PTR
-        MOV     r1, #0                   @ Desabilita o sinal de start
-        STR     r1, [START_PTR]          @ Escreve em START_PTR
-        BX      lr
+    MOV     R1, #0                       @ Desabilita o sinal de start
+    LDR     R2, =LW_virtual              @ Carrega o ponteiro de memória virtual
+    LDR     R3, [R2]                     @ Carrega DATA_A_PTR
+    STR     R1, [R3]                     @ Escreve em DATA_A_PTR
+    LDR     R1, [R2]                     @ Carrega o opcode_enderecamentos
+    STR     R1, [R3]                     @ Escreve opcode em DATA_A_PTR
+    LDR     R1, [R2]                     @ Carrega dados
+    STR     R1, [R3, #4]                 @ Escreve dados em DATA_B_PTR
+    MOV     R1, #1                       @ Habilita o sinal de start
+    STR     R1, [R3, #8]                 @ Escreve em START_PTR
+    MOV     R1, #0                       @ Desabilita o sinal de start
+    STR     R1, [R3, #8]                 @ Escreve em START_PTR
+    BX      LR
 
+.type instrucao_wbr, %function
 instrucao_wbr:
-        LDR     r1, =WBR                  @ Carrega o opcode WBR
-        LDR     r2, [r0]                  @ Carrega r, g, b de r0
-        LSR     r3, r2, #3                 @ g
-        LSL     r3, r3, #3                 @ g << 3
-        LSL     r2, r2, #6                 @ b << 6
-        ORR     r2, r2, r3                 @ (b << 6) | (g << 3)
-        ORR     r0, r2, r1                 @ dados = (b << 6) | (g << 3) | r
+    LDR     R1, =WBR                     @ Carrega o opcode WBR
+    LDR     R2, [R0]                     @ Carrega r, g, b de R0
+    LSR     R3, R2, #3                   @ g
+    LSL     R3, R3, #3                   @ g << 3
+    LSL     R2, R2, #6                   @ b << 6
+    ORR     R2, R2, R3                   @ (b << 6) | (g << 3)
+    ORR     R0, R2, R1                   @ dados = (b << 6) | (g << 3) | R
 
-        BL      send_instruction            @ Chama send_instruction
-        BX      lr
+    BL      send_instruction              @ Chama send_instruction
+    BX      LR
 
-instrucao_wbr_sprite:
-        LDR     r1, =WBR                  @ Carrega o opcode WBR
-        LDR     r2, =0                     @ Inicializa dados
-        LSL     r3, r0, #4                 @ reg << 4
-        ORR     r2, r2, r3                 @ opcode_reg = (reg << 4) | WBR
-        LDR     r3, =offset                @ offset
-        LSL     r4, r1, #9                  @ y << 9
-        LSL     r5, r0, #19                 @ x << 19
-        ORR     r2, r2, r3                 @ dados = offset
-        ORR     r2, r2, r4                 @ | (y << 9)
-        ORR     r2, r2, r5                 @ | (x << 19)
-
-        @ Se sprite for verdadeiro, define o bit 29
-        CMP     r6, #0
-        BEQ     .skip_sprite
-        ORR     r2, r2, #0x20000000        @ Set bit 29
-.skip_sprite:
-        BL      send_instruction            @ Chama send_instruction
-        BX      lr
-
+.type instrucao_wbm, %function
 instrucao_wbm:
-        LDR     r1, =WBM                   @ Carrega o opcode WBM
-        LDR     r2, [r0]                   @ Carrega address de r0
-        LDR     r3, [r0, #4]               @ Carrega r
-        LDR     r4, [r0, #8]               @ Carrega g
-        LDR     r5, [r0, #12]              @ Carrega b
+    LDR     R1, =WBM                      @ Carrega o opcode WBM
+    LDR     R2, [R0]                      @ Carrega address de R0
+    LDR     R3, [R0, #4]                  @ Carrega R
+    LDR     R4, [R0, #8]                  @ Carrega G
+    LDR     R5, [R0, #12]                 @ Carrega B
 
-        LSL     r3, r3, #3                  @ g << 3
-        LSL     r4, r4, #6                  @ b << 6
-        ORR     r0, r3, r4                  @ dados = (g << 3) | (b << 6)
-        LSL     r2, r2, #4                  @ address << 4
-        ORR     r0, r0, r1                  @ opcode_reg = (address << 4) | opcode
-        BL      send_instruction            @ Chama send_instruction
-        BX      lr
+    LSL     R3, R3, #3                    @ G << 3
+    LSL     R4, R4, #6                    @ B << 6
+    ORR     R0, R3, R4                    @ dados = (G << 3) | (B << 6)
+    LSL     R2, R2, #4                    @ address << 4
+    ORR     R0, R0, R1                    @ opcode_reg = (address << 4) | opcode
+    BL      send_instruction              @ Chama send_instruction
+    BX      LR
 
+.type instrucao_wsm, %function
 instrucao_wsm:
-        LDR     r1, =WSM                   @ Carrega o opcode WSM
-        LDR     r2, [r0]                   @ Carrega address de r0
-        LDR     r3, [r0, #4]               @ Carrega r
-        LDR     r4, [r0, #8]               @ Carrega g
-        LDR     r5, [r0, #12]              @ Carrega b
+    LDR     R1, =WSM                      @ Carrega o opcode WSM
+    LDR     R2, [R0]                      @ Carrega address de R0
+    LDR     R3, [R0, #4]                  @ Carrega R
+    LDR     R4, [R0, #8]                  @ Carrega G
+    LDR     R5, [R0, #12]                 @ Carrega B
 
-        LSL     r3, r3, #3                  @ g << 3
-        LSL     r4, r4, #6                  @ b << 6
-        ORR     r0, r3, r4                  @ dados = (g << 3) | (b << 6)
-        LSL     r2, r2, #4                  @ address << 4
-        ORR     r0, r0, r1                  @ opcode_reg = (address << 4) | opcode
-        BL      send_instruction            @ Chama send_instruction
-        BX      lr
+    LSL     R3, R3, #3                    @ G << 3
+    LSL     R4, R4, #6                    @ B << 6
+    ORR     R0, R3, R4                    @ dados = (G << 3) | (B << 6)
+    LSL     R2, R2, #4                    @ address << 4
+    ORR     R0, R0, R1                    @ opcode_reg = (address << 4) | opcode
+    BL      send_instruction              @ Chama send_instruction
+    BX      LR
 
+.type instrucao_dp, %function
 instrucao_dp:
-        LDR     r1, =DP                    @ Carrega o opcode DP
-        LDR     r2, [r0]                   @ Carrega address de r0
-        LDR     r3, [r0, #4]               @ Carrega ref_x
-        LDR     r4, [r0, #8]               @ Carrega ref_y
-        LDR     r5, [r0, #12]              @ Carrega size
-        LDR     r6, [r0, #16]              @ Carrega r
-        LDR     r7, [r0, #20]              @ Carrega g
-        LDR     r8, [r0, #24]              @ Carrega b
-        LDR     r9, [r0, #28]              @ Carrega shape
+    LDR     R1, =DP                       @ Carrega o opcode DP
+    LDR     R2, [R0]                      @ Carrega address de R0
+    LDR     R3, [R0, #4]                  @ Carrega ref_x
+    LDR     R4, [R0, #8]                  @ Carrega ref_y
+    LDR     R5, [R0, #12]                 @ Carrega size
+    LDR     R6, [R0, #16]                 @ Carrega R
+    LDR     R7, [R0, #20]                 @ Carrega G
+    LDR     R8, [R0, #24]                 @ Carrega B
 
-        LSL     r6, r6, #6                  @ b << 6
-        LSL     r7, r7, #3                  @ g << 3
-        ORR     r2, r6, r7                  @ rgb = (b << 6) | (g << 3) | r
-        LSL     r2, r2, #22                 @ rgb << 22
-        LSL     r5, r5, #18                 @ size << 18
-        LSL     r4, r4, #9                  @ ref_y << 9
-        ORR     r3, r4, r3                  @ dados = (rgb << 22) | (size << 18) | (ref_y << 9) | ref_x
-        CMP     r9, #0                      @ Se shape
-        BEQ     .send_instruction_dp
-        ORR     r3, r3, #0x80000000         @ Set bit 31
-.send_instruction_dp:
-        LSL     r2, r2, #4                  @ address << 4
-        ORR     r3, r3, r1                  @ opcode_reg = (address << 4) | opcode
-        BL      send_instruction            @ Chama send_instruction
-        BX      lr
+    LSL     R6, R6, #3                    @ R << 3
+    LSL     R7, R7, #6                    @ G << 6
+    LSL     R8, R8, #9                    @ B << 9
+    ORR     R0, R6, R7                    @ dados = (R << 3) | (G << 6)
+    ORR     R0, R0, R8                    @ dados = (dados << 9) | B
+    LSL     R2, R2, #4                    @ address << 4
+    ORR     R0, R0, R1                    @ opcode_reg = (address << 4) | opcode
+    BL      send_instruction              @ Chama send_instruction
+    BX      LR
+
