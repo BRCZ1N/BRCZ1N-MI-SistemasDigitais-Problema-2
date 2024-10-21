@@ -62,12 +62,12 @@ gpu_init:
 
     LDR     R6, =START                   @ Offset de START
     ADD     R6, R5, R6                   @ START_PTR = LW_virtual + START
-    LDR     R7, =START_PTR                @ Carrega o endereço de START_PTR
+    LDR     R7, =START_PTR               @ Carrega o endereço de START_PTR
     STR     R6, [R7]                     @ Armazena o ponteiro em START_PTR
 
     LDR     R6, =WRFULL                  @ Offset de WRFULL
     ADD     R6, R5, R6                   @ WRFULL_PTR = LW_virtual + WRFULL
-    LDR     R7, =WRFULL_PTR               @ Carrega o endereço de WRFULL_PTR
+    LDR     R7, =WRFULL_PTR              @ Carrega o endereço de WRFULL_PTR
     STR     R6, [R7]                     @ Armazena o ponteiro em WRFULL_PTR
 
     MOV     R0, #0                       @ Retorna 0 em caso de sucesso
@@ -142,7 +142,7 @@ instruction_wbr:
     ORR     R1, R1, R0                    @ dados |= r
 
     LDR     R0, =WBR                      @ Carrega o opcode WBR
-    BL      send_instruction               @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
 
     ADD     SP, SP, #12                   @ Libera o espaço alocado na pilha
     POP     {LR}                          @ Restaura o registrador de link
@@ -179,19 +179,14 @@ instruction_wbr_sprite:
     ORR     R6, R6, R2                    @ dados = dados | (x << 19)
 
     CMP     R4, #0                        @ Verifica se sp é 0
-    BNE     if_sp                         @ Se sp != 0, vai para habilitar sprite
+    BNE     send_instruction_wbr_sprite   @ Se sp != 0, vai para habilitar sprite
 
-    MOV     R1, R6                        @ Armazena os dados finais em R1
-    BL      send_instruction_wbr_sprite   @ Chama send_instruction
-
-if_sp:
-
-    ORR     R6, R6, #0x20000000           @ Habilita sprite se sp for 1
+    ORR     R6, R6, #0x20000000           @ Habilita sprite se sp for 1    
     MOV     R1, R6                        @ Armazena os dados finais em R1
 
 send_instruction_wbr_sprite:
 
-    BL      send_instruction               @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
 
     ADD     SP, SP, #20                   @ Libera espaço na pilha
     POP     {LR}                          @ Restaura o registrador de link
@@ -216,16 +211,16 @@ instruction_wbm:
     LDR     R4, [SP, #8]                  @ Carrega G
     LDR     R5, [SP, #12]                 @ Carrega B
 
-    LSL     R4, R4, #3                     @ G << 3
-    LSL     R5, R5, #6                     @ B << 6
+    LSL     R4, R4, #3                    @ G << 3
+    LSL     R5, R5, #6                    @ B << 6
 
     ORR     R1, R3, R4                    @ dados = (R) | (G << 3)
     ORR     R1, R1, R5                    @ dados = dados | (B << 6)
 
-    LSL     R2, R2, #4                     @ address << 4
-    ORR     R0, R2, R1                     @ opcode_reg = (address << 4) | opcode
+    LSL     R2, R2, #4                    @ address << 4
+    ORR     R0, R2, R1                    @ opcode_reg = (address << 4) | opcode
 
-    BL      send_instruction               @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
 
     ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
     POP     {LR}                          @ Restaura o registrador de link
@@ -251,22 +246,20 @@ instruction_wsm:
     LDR     R4, [SP, #8]                  @ Carrega G
     LDR     R5, [SP, #12]                 @ Carrega B
 
-    LSL     R4, R4, #3                     @ G << 3
-    LSL     R5, R5, #6                     @ B << 6
+    LSL     R4, R4, #3                    @ G << 3
+    LSL     R5, R5, #6                    @ B << 6
 
     ORR     R1, R3, R4                    @ dados = (R) | (G << 3)
     ORR     R1, R1, R5                    @ dados = dados | (B << 6)
 
-    LSL     R2, R2, #4                     @ address << 4
-    ORR     R0, R2, R1                     @ opcode_reg = (address << 4) | opcode
+    LSL     R2, R2, #4                    @ address << 4
+    ORR     R0, R2, R1                    @ opcode_reg = (address << 4) | opcode
 
-    BL      send_instruction               @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
 
     ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
     POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
-
-
 
 .type instruction_dp, %function
 instruction_dp:
@@ -307,31 +300,24 @@ instruction_dp:
 
     ORR     R1, R1, R3                    @ dados |= ref_x
 
-    CMP     R9, #0                        @ Verifica se shape é 0
-    BNE     if_shape                      @ Se shape == 0, vai para o fluxo normal
-
-    ORR     R1, R1, #0x80000000           @ Se shape for 1, habilita bit 31
-
-if_shape:
-
     LSL     R2, R2, #4                    @ address << 4
     LDR     R0, =DP                       @ Carrega o opcode DP
     ORR     R0, R2, R0                    @ opcode_reg = (address << 4) | opcode
 
+    CMP     R9, #0                        @ Verifica se shape é 0
+    BNE     send_instruction_dp           @ Se shape != 0, pula para enviar a instrução
+
+    ORR     R1, R1, #0x80000000           @ Se shape == 0, habilita o bit 31
+
 send_instruction_dp:
 
-    BL      send_instruction               @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
 
     ADD     SP, SP, #32                   @ Libera espaço na pilha
     POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
 
-    CMP     R4, #0                        @ Verifica se sp é 0
-    BNE     if_sp                         @ Se sp != 0, vai para habilitar sprite
-
-    MOV     R1, R6                        @ Armazena os dados finais em R1
-    BL      send_instruction_wbr_sprite   @ Chama send_instruction
 
 
 
