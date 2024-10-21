@@ -28,7 +28,7 @@ gpu_init:
     MOV     R1, #2                       @ O_RDWR
     SWI     0                            @ Chama a syscall
     MOV     R4, R0                       @ fd é retornado em R0
-    CMP     R0, #-1                      @ Verifica se fd é -1 (corrigido)
+    CMP     R0, #-1                      @ Verifica se fd é -1
     BLT     .error_open                  @ Se sim, vai para erro
 
     LDR     R0, =LW_BRIDGE_BASE          @ Endereço base da memória
@@ -85,16 +85,21 @@ gpu_exit:
 send_instruction:
     MOV     R1, #0                       @ Desabilita o sinal de start
     LDR     R2, =LW_VIRTUAL              @ Carrega o ponteiro de memória virtual
-    LDR     R3, [R2]                     @ Carrega DATA_A_PTR
+    LDR     R3, [R4, #0]                 @ Carrega DATA_A_PTR
     STR     R1, [R3]                     @ Escreve em DATA_A_PTR
-    LDR     R1, [R2]                     @ Carrega o opcode_enderecamentos
+
+    LDR     R1, [R4, #0]                 @ Carrega o opcode_enderecamentos
     STR     R1, [R3]                     @ Escreve opcode em DATA_A_PTR
+    
+    LDR     R3, [R4, #4]                 @ Carrega DATA_B_PTR
     LDR     R1, [R2]                     @ Carrega dados
-    STR     R1, [R3, #4]                 @ Escreve dados em DATA_B_PTR
+    STR     R1, [R3]                     @ Escreve dados em DATA_B_PTR
+
+    LDR     R3, [R4, #8]                 @ Carrega START_PTR
     MOV     R1, #1                       @ Habilita o sinal de start
-    STR     R1, [R3, #8]                 @ Escreve em START_PTR
+    STR     R1, [R3]                     @ Escreve em START_PTR
     MOV     R1, #0                       @ Desabilita o sinal de start
-    STR     R1, [R3, #8]                 @ Escreve em START_PTR
+    STR     R1, [R3]                     @ Escreve em START_PTR
     BX      LR
 
 .type instrucao_wbr, %function
@@ -107,7 +112,7 @@ instrucao_wbr:
     ORR     R2, R2, R3                   @ (b << 6) | (g << 3)
     ORR     R0, R2, R1                   @ dados = (b << 6) | (g << 3) | R
 
-    BL      send_instruction             @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
     BX      LR
 
 .type instrucao_wbm, %function
@@ -123,7 +128,7 @@ instrucao_wbm:
     ORR     R0, R3, R4                   @ dados = (G << 3) | (B << 6)
     LSL     R2, R2, #4                   @ address << 4
     ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction             @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
     BX      LR
 
 .type instrucao_wsm, %function
@@ -139,7 +144,7 @@ instrucao_wsm:
     ORR     R0, R3, R4                   @ dados = (G << 3) | (B << 6)
     LSL     R2, R2, #4                   @ address << 4
     ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction             @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
     BX      LR
 
 .type instrucao_dp, %function
@@ -160,5 +165,5 @@ instrucao_dp:
     ORR     R0, R0, R8                   @ dados = (dados << 9) | B
     LSL     R2, R2, #4                   @ address << 4
     ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction             @ Chama send_instruction
+    BL      send_instruction              @ Chama send_instruction
     BX      LR
