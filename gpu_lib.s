@@ -27,6 +27,7 @@ WRFULL_PTR:    .word 0                  @ Ponteiro para WRFULL
 .global instruction_wsm
 .global instruction_dp
 
+
 .type gpu_init, %function
 gpu_init:
 
@@ -152,7 +153,8 @@ instruction_wbr:
 .type instruction_wbr_sprite, %function
 instruction_wbr_sprite:
 
-    PUSH    {LR}                          @ Salva o registrador de link
+    PUSH    {LR}      
+    LDR     R4, [SP, #4]                    @ Salva o registrador de link
     SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (reg, offset, x, y, sp)
 
     STR     R0, [SP, #0]                  @ Armazena reg (R0) na pilha
@@ -264,6 +266,10 @@ instruction_wsm:
 .type instruction_dp, %function
 instruction_dp:
 
+    LDR     R4, [SP, #0]
+    LDR     R5, [SP, #4]
+    LDR     R6, [SP, #8]
+    LDR     R7, [SP, #12]
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #32                   @ Aloca espaço na pilha para 8 parâmetros (address, ref_x, ref_y, size, R, G, B, shape)
 
