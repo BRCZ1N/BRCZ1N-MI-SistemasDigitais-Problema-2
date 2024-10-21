@@ -1,6 +1,6 @@
 .section .data
-LW_BRIDGE_BASE: .word 0x00000000        @ Defina o endereço base da ponte
-LW_BRIDGE_SPAN: .word 0x00000010        @ Defina o tamanho da memória da ponte
+LW_BRIDGE_BASE: .word 0xFF200000        @ Defina o endereço base da ponte
+LW_BRIDGE_SPAN: .word 0x00005000        @ Defina o tamanho da memória da ponte
 DATA_A:         .word 0x80              @ Offset para DATA_A
 DATA_B:         .word 0x70              @ Offset para DATA_B
 START:          .word 0xc0              @ Offset para START
@@ -11,6 +11,11 @@ WSM:            .word 0b01              @ Código de operação WSM
 DP:             .word 0b11              @ Código de operação DP
 LW_VIRTUAL:     .word 0                 @ Variável para LW_virtual
 DEV_MEM_PATH:   .asciz "/dev/mem"       @ Caminho para /dev/mem
+
+DATA_A_PTR:    .word 0                  @ Ponteiro para DATA_A
+DATA_B_PTR:    .word 0                  @ Ponteiro para DATA_B
+START_PTR:     .word 0                  @ Ponteiro para START
+WRFULL_PTR:    .word 0                  @ Ponteiro para WRFULL
 
 .section .text
 .global gpu_init
@@ -23,6 +28,7 @@ DEV_MEM_PATH:   .asciz "/dev/mem"       @ Caminho para /dev/mem
 
 .type gpu_init, %function
 gpu_init:
+
     LDR     R0, =DEV_MEM_PATH            @ Carrega o caminho do arquivo
     MOV     R7, #5                       @ syscall: open
     MOV     R1, #2                       @ O_RDWR
@@ -46,35 +52,42 @@ gpu_init:
     @ Atribui os ponteiros às regiões de memória
     LDR     R6, =DATA_A                  @ Offset de DATA_A
     ADD     R6, R5, R6                   @ DATA_A_PTR = LW_virtual + DATA_A
-    STR     R6, [R4, #0]                 @ Armazena o ponteiro em DATA_A_PTR
+    LDR     R7, =DATA_A_PTR              @ Carrega o endereço de DATA_A_PTR
+    STR     R6, [R7]                     @ Armazena o ponteiro em DATA_A_PTR
 
     LDR     R6, =DATA_B                  @ Offset de DATA_B
     ADD     R6, R5, R6                   @ DATA_B_PTR = LW_virtual + DATA_B
-    STR     R6, [R4, #4]                 @ Armazena o ponteiro em DATA_B_PTR (offset de 4 bytes)
+    LDR     R7, =DATA_B_PTR              @ Carrega o endereço de DATA_B_PTR
+    STR     R6, [R7]                     @ Armazena o ponteiro em DATA_B_PTR
 
     LDR     R6, =START                   @ Offset de START
     ADD     R6, R5, R6                   @ START_PTR = LW_virtual + START
-    STR     R6, [R4, #8]                 @ Armazena o ponteiro em START_PTR (offset de 8 bytes)
+    LDR     R7, =START_PTR                @ Carrega o endereço de START_PTR
+    STR     R6, [R7]                     @ Armazena o ponteiro em START_PTR
 
     LDR     R6, =WRFULL                  @ Offset de WRFULL
     ADD     R6, R5, R6                   @ WRFULL_PTR = LW_virtual + WRFULL
-    STR     R6, [R4, #12]                @ Armazena o ponteiro em WRFULL_PTR (offset de 12 bytes)
+    LDR     R7, =WRFULL_PTR               @ Carrega o endereço de WRFULL_PTR
+    STR     R6, [R7]                     @ Armazena o ponteiro em WRFULL_PTR
 
     MOV     R0, #0                       @ Retorna 0 em caso de sucesso
     BX      LR
 
 .error_open:
+
     @ Lidar com erro ao abrir /dev/mem
     MOV     R0, #-1                      @ Retorna -1
     BX      LR
 
 .error_mmap:
+
     @ Lidar com erro ao fazer mmap
     MOV     R0, #-1                      @ Retorna -1
     BX      LR
 
 .type gpu_exit, %function
 gpu_exit:
+
     LDR     R0, =LW_VIRTUAL              @ Carrega LW_virtual
     LDR     R1, =LW_BRIDGE_SPAN          @ Carrega o tamanho do mapeamento
     MOV     R7, #91                      @ syscall: munmap
@@ -83,87 +96,236 @@ gpu_exit:
 
 .type send_instruction, %function
 send_instruction:
-    MOV     R1, #0                       @ Desabilita o sinal de start
-    LDR     R2, =LW_VIRTUAL              @ Carrega o ponteiro de memória virtual
-    LDR     R3, [R4, #0]                 @ Carrega DATA_A_PTR
-    STR     R1, [R3]                     @ Escreve em DATA_A_PTR
 
-    LDR     R1, [R4, #0]                 @ Carrega o opcode_enderecamentos
-    STR     R1, [R3]                     @ Escreve opcode em DATA_A_PTR
-    
-    LDR     R3, [R4, #4]                 @ Carrega DATA_B_PTR
-    LDR     R1, [R2]                     @ Carrega dados
-    STR     R1, [R3]                     @ Escreve dados em DATA_B_PTR
+    PUSH    {LR}                          @ Salva o registrador de link
 
-    LDR     R3, [R4, #8]                 @ Carrega START_PTR
-    MOV     R1, #1                       @ Habilita o sinal de start
-    STR     R1, [R3]                     @ Escreve em START_PTR
-    MOV     R1, #0                       @ Desabilita o sinal de start
-    STR     R1, [R3]                     @ Escreve em START_PTR
-    BX      LR
+    MOV     R4, #0                        @ Desabilita o sinal de start
+    LDR     R3, =START_PTR                @ Carrega START_PTR
+    STR     R4, [R3]                      @ Desabilita o sinal de start
+
+    LDR     R4, [SP, #8]                  @ Carrega opcode_enderecamentos (segundo argumento)
+    LDR     R3, =DATA_A_PTR               @ Carrega DATA_A_PTR
+    LDR     R3, [R3]                      @ Carrega o endereço armazenado em DATA_A_PTR
+    STR     R4, [R3]                      @ Escreve opcode_enderecamentos em DATA_A_PTR
+
+    LDR     R4, [SP, #4]                  @ Carrega dados (primeiro argumento)
+    LDR     R3, =DATA_B_PTR               @ Carrega DATA_B_PTR
+    LDR     R3, [R3]                      @ Carrega o endereço armazenado em DATA_B_PTR
+    STR     R4, [R3]                      @ Escreve dados em DATA_B_PTR
+
+    MOV     R4, #1                        @ Habilita o sinal de start
+    STR     R4, [R3]                      @ Escreve em START_PTR
+    MOV     R4, #0                        @ Desabilita o sinal de start
+    STR     R4, [R3]                      @ Escreve em START_PTR
+
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
 
 .type instrucao_wbr, %function
 instrucao_wbr:
-    LDR     R1, =WBR                     @ Carrega o opcode WBR
-    LDR     R2, [R0]                     @ Carrega r, g, b de R0
-    LSR     R3, R2, #3                   @ g
-    LSL     R3, R3, #3                   @ g << 3
-    LSL     R2, R2, #6                   @ b << 6
-    ORR     R2, R2, R3                   @ (b << 6) | (g << 3)
-    ORR     R0, R2, R1                   @ dados = (b << 6) | (g << 3) | R
 
-    BL      send_instruction              @ Chama send_instruction
-    BX      LR
+    PUSH    {LR}                          @ Salva o registrador de link
+    SUB     SP, SP, #12                   @ Aloca espaço na pilha para 3 parâmetros (r, g, b)
+
+    STR     R0, [SP, #0]                  @ Armazena r na pilha
+    STR     R1, [SP, #4]                  @ Armazena g na pilha
+    STR     R2, [SP, #8]                  @ Armazena b na pilha
+
+    LDR     R0, [SP, #0]                  @ Carrega r
+    LDR     R1, [SP, #4]                  @ Carrega g
+    LDR     R2, [SP, #8]                  @ Carrega b
+
+    LSL     R1, R1, #3                    @ g << 3 (desloca g para a esquerda 3 bits)
+    LSL     R2, R2, #6                    @ b << 6 (desloca b para a esquerda 6 bits)
+
+    ORR     R1, R2, R1                    @ dados = (b << 6) | (g << 3)
+    ORR     R1, R1, R0                    @ dados |= r
+
+    LDR     R0, =WBR                      @ Carrega o opcode WBR
+    BL      send_instruction               @ Chama send_instruction
+
+    ADD     SP, SP, #12                   @ Libera o espaço alocado na pilha
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
+
+
+.type instrucao_wbr_sprite, %function
+instrucao_wbr_sprite:
+
+    PUSH    {LR}                          @ Salva o registrador de link
+    SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (reg, offset, x, y, sp)
+
+    STR     R0, [SP, #0]                  @ Armazena reg (R0) na pilha
+    STR     R1, [SP, #4]                  @ Armazena offset na pilha
+    STR     R2, [SP, #8]                  @ Armazena x na pilha
+    STR     R3, [SP, #12]                 @ Armazena y na pilha
+    STR     R4, [SP, #16]                 @ Armazena sp na pilha
+
+    LDR     R5, =WBR                      @ Carrega o opcode WBR
+
+    LDR     R0, [SP, #0]                  @ Carrega reg de R0
+    LSL     R0, R0, #4                    @ reg << 4
+    ORR     R0, R0, R5                    @ opcode_reg = (reg << 4) | opcode
+
+    LDR     R1, [SP, #4]                  @ Carrega offset de R1
+    LDR     R2, [SP, #8]                  @ Carrega x de R2
+    LDR     R3, [SP, #12]                 @ Carrega y de R3
+    LDR     R4, [SP, #16]                 @ Carrega sp de R4
+
+    MOV     R6, R1                        @ Inicializa dados com offset
+    LSL     R3, R3, #9                    @ y << 9
+    ORR     R6, R6, R3                    @ dados = offset | (y << 9)
+    LSL     R2, R2, #19                   @ x << 19
+    ORR     R6, R6, R2                    @ dados = dados | (x << 19)
+
+    CMP     R4, #0                        @ Verifica se sp é 0
+    BNE     if_sp                        @ Se sp != 0, vai para habilitar sprite
+
+    MOV     R1, R6                        @ Armazena os dados finais em R1
+    B       send_instruction              @ Chama send_instruction
+
+if_sp:
+
+    ORR     R6, R6, #0x20000000           @ Habilita sprite se sp for 1
+    MOV     R1, R6                        @ Armazena os dados finais em R1
+
+send_instruction:
+
+    BL      send_instruction               @ Chama send_instruction
+
+    ADD     SP, SP, #20                   @ Libera espaço na pilha
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
+
 
 .type instrucao_wbm, %function
 instrucao_wbm:
-    LDR     R1, =WBM                     @ Carrega o opcode WBM
-    LDR     R2, [R0]                     @ Carrega address de R0
-    LDR     R3, [R0, #4]                 @ Carrega R
-    LDR     R4, [R0, #8]                 @ Carrega G
-    LDR     R5, [R0, #12]                @ Carrega B
 
-    LSL     R3, R3, #3                   @ G << 3
-    LSL     R4, R4, #6                   @ B << 6
-    ORR     R0, R3, R4                   @ dados = (G << 3) | (B << 6)
-    LSL     R2, R2, #4                   @ address << 4
-    ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction              @ Chama send_instruction
-    BX      LR
+    PUSH    {LR}                          @ Salva o registrador de link
+    SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
+
+    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
+    STR     R1, [SP, #4]                  @ Armazena R na pilha
+    STR     R2, [SP, #8]                  @ Armazena G na pilha
+    STR     R3, [SP, #12]                 @ Armazena B na pilha
+
+    LDR     R1, =WBM                      @ Carrega o opcode WBM
+
+    LDR     R2, [SP, #0]                  @ Carrega address de R0
+    LDR     R3, [SP, #4]                  @ Carrega R
+    LDR     R4, [SP, #8]                  @ Carrega G
+    LDR     R5, [SP, #12]                 @ Carrega B
+
+    LSL     R4, R4, #3                     @ G << 3
+    LSL     R5, R5, #6                     @ B << 6
+
+    ORR     R1, R3, R4                    @ dados = (R) | (G << 3)
+    ORR     R1, R1, R5                    @ dados = dados | (B << 6)
+
+    LSL     R2, R2, #4                     @ address << 4
+    ORR     R0, R2, R1                     @ opcode_reg = (address << 4) | opcode
+
+    BL      send_instruction               @ Chama send_instruction
+
+    ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
+
+
 
 .type instrucao_wsm, %function
 instrucao_wsm:
-    LDR     R1, =WSM                     @ Carrega o opcode WSM
-    LDR     R2, [R0]                     @ Carrega address de R0
-    LDR     R3, [R0, #4]                 @ Carrega R
-    LDR     R4, [R0, #8]                 @ Carrega G
-    LDR     R5, [R0, #12]                @ Carrega B
 
-    LSL     R3, R3, #3                   @ G << 3
-    LSL     R4, R4, #6                   @ B << 6
-    ORR     R0, R3, R4                   @ dados = (G << 3) | (B << 6)
-    LSL     R2, R2, #4                   @ address << 4
-    ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction              @ Chama send_instruction
-    BX      LR
+    PUSH    {LR}                          @ Salva o registrador de link
+    SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
+
+    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
+    STR     R1, [SP, #4]                  @ Armazena R na pilha
+    STR     R2, [SP, #8]                  @ Armazena G na pilha
+    STR     R3, [SP, #12]                 @ Armazena B na pilha
+
+    LDR     R1, =WSM                      @ Carrega o opcode WSM
+
+    LDR     R2, [SP, #0]                  @ Carrega address de R0
+    LDR     R3, [SP, #4]                  @ Carrega R
+    LDR     R4, [SP, #8]                  @ Carrega G
+    LDR     R5, [SP, #12]                 @ Carrega B
+
+    LSL     R4, R4, #3                     @ G << 3
+    LSL     R5, R5, #6                     @ B << 6
+
+    ORR     R1, R3, R4                    @ dados = (R) | (G << 3)
+    ORR     R1, R1, R5                    @ dados = dados | (B << 6)
+
+    LSL     R2, R2, #4                     @ address << 4
+    ORR     R0, R2, R1                     @ opcode_reg = (address << 4) | opcode
+
+    BL      send_instruction               @ Chama send_instruction
+
+    ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
+
+
 
 .type instrucao_dp, %function
 instrucao_dp:
-    LDR     R1, =DP                      @ Carrega o opcode DP
-    LDR     R2, [R0]                     @ Carrega address de R0
-    LDR     R3, [R0, #4]                 @ Carrega ref_x
-    LDR     R4, [R0, #8]                 @ Carrega ref_y
-    LDR     R5, [R0, #12]                @ Carrega size
-    LDR     R6, [R0, #16]                @ Carrega R
-    LDR     R7, [R0, #20]                @ Carrega G
-    LDR     R8, [R0, #24]                @ Carrega B
 
-    LSL     R6, R6, #3                   @ R << 3
-    LSL     R7, R7, #6                   @ G << 6
-    LSL     R8, R8, #9                   @ B << 9
-    ORR     R0, R6, R7                   @ dados = (R << 3) | (G << 6)
-    ORR     R0, R0, R8                   @ dados = (dados << 9) | B
-    LSL     R2, R2, #4                   @ address << 4
-    ORR     R0, R0, R1                   @ opcode_reg = (address << 4) | opcode
-    BL      send_instruction              @ Chama send_instruction
-    BX      LR
+    PUSH    {LR}                          @ Salva o registrador de link
+    SUB     SP, SP, #32                   @ Aloca espaço na pilha para 8 parâmetros (address, ref_x, ref_y, size, R, G, B, shape)
+
+    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
+    STR     R1, [SP, #4]                  @ Armazena ref_x na pilha
+    STR     R2, [SP, #8]                  @ Armazena ref_y na pilha
+    STR     R3, [SP, #12]                 @ Armazena size na pilha
+    STR     R4, [SP, #16]                 @ Armazena R na pilha
+    STR     R5, [SP, #20]                 @ Armazena G na pilha
+    STR     R6, [SP, #24]                 @ Armazena B na pilha
+    STR     R7, [SP, #28]                 @ Armazena shape na pilha
+
+    LDR     R2, [SP, #0]                  @ Carrega address de R0
+    LDR     R3, [SP, #4]                  @ Carrega ref_x
+    LDR     R4, [SP, #8]                  @ Carrega ref_y
+    LDR     R5, [SP, #12]                 @ Carrega size
+    LDR     R6, [SP, #16]                 @ Carrega R
+    LDR     R7, [SP, #20]                 @ Carrega G
+    LDR     R8, [SP, #24]                 @ Carrega B
+    LDR     R9, [SP, #28]                 @ Carrega shape
+
+    LSL     R7, R7, #3                    @ G << 3
+    LSL     R8, R8, #6                    @ B << 6
+
+    ORR     R1, R6, R7                    @ rgb = (R) | (G << 3)
+    ORR     R1, R1, R8                    @ rgb = (rgb) | (B << 6)
+
+    LSL     R1, R1, #22                   @ dados = (rgb << 22)
+    LSL     R5, R5, #18                   @ size << 18
+    ORR     R1, R1, R5                    @ dados |= (size << 18)
+
+    LSL     R4, R4, #9                    @ ref_y << 9
+    ORR     R1, R1, R4                    @ dados |= (ref_y << 9)
+
+    ORR     R1, R1, R3                    @ dados |= ref_x
+
+    CMP     R9, #0                        @ Verifica se shape é 0
+    BEQ     no_shape                      @ Se shape == 0, vai para o fluxo normal
+
+    ORR     R1, R1, #0x80000000           @ Se shape for 1, habilita bit 31
+
+no_shape:
+
+    LSL     R2, R2, #4                    @ address << 4
+    LDR     R0, =DP                       @ Carrega o opcode DP
+    ORR     R0, R2, R0                    @ opcode_reg = (address << 4) | opcode
+
+    BL      send_instruction               @ Chama send_instruction
+
+    ADD     SP, SP, #32                   @ Libera o espaço alocado na pilha
+    POP     {LR}                          @ Restaura o registrador de link
+    BX      LR                            @ Retorna
+
+
+
+
+
+
