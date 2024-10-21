@@ -28,14 +28,14 @@ gpu_init:
     MOV     R1, #2                       @ O_RDWR
     SWI     0                            @ Chama a syscall
     MOV     R4, R0                       @ fd é retornado em R0
-    CMP     R0, #0                       @ Verifica se fd é -1
+    CMP     R0, #-1                      @ Verifica se fd é -1 (corrigido)
     BLT     .error_open                  @ Se sim, vai para erro
 
     LDR     R0, =LW_BRIDGE_BASE          @ Endereço base da memória
     LDR     R1, =LW_BRIDGE_SPAN          @ Tamanho da memória
     MOV     R2, #3                       @ PROT_READ | PROT_WRITE
     MOV     R3, #1                       @ MAP_SHARED
-    MOV     R7, #192                     @ syscall: mmap
+    MOV     R7, #192                     @ syscall: mmap (Falta confirmar 192)
     SWI     0                            @ Chama a syscall
     LDR     R1, =LW_VIRTUAL              @ Carrega o endereço de LW_virtual
     STR     R0, [R1]                     @ Armazena o ponteiro de memória virtual retornado por mmap
