@@ -21,10 +21,10 @@ WRFULL_PTR:    .word 0                  @ Ponteiro para WRFULL
 .global gpu_init
 .global gpu_exit
 .global send_instruction
-.global instrucao_wbr
-.global instrucao_wbm
-.global instrucao_wsm
-.global instrucao_dp
+.global instruction_wbr
+.global instruction_wbm
+.global instruction_wsm
+.global instruction_dp
 
 .type gpu_init, %function
 gpu_init:
@@ -121,8 +121,8 @@ send_instruction:
     POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
-.type instrucao_wbr, %function
-instrucao_wbr:
+.type instruction_wbr, %function
+instruction_wbr:
 
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #12                   @ Aloca espaço na pilha para 3 parâmetros (r, g, b)
@@ -149,8 +149,8 @@ instrucao_wbr:
     BX      LR                            @ Retorna
 
 
-.type instrucao_wbr_sprite, %function
-instrucao_wbr_sprite:
+.type instruction_wbr_sprite, %function
+instruction_wbr_sprite:
 
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (reg, offset, x, y, sp)
@@ -179,17 +179,17 @@ instrucao_wbr_sprite:
     ORR     R6, R6, R2                    @ dados = dados | (x << 19)
 
     CMP     R4, #0                        @ Verifica se sp é 0
-    BNE     if_sp                        @ Se sp != 0, vai para habilitar sprite
+    BNE     if_sp                         @ Se sp != 0, vai para habilitar sprite
 
     MOV     R1, R6                        @ Armazena os dados finais em R1
-    B       send_instruction              @ Chama send_instruction
+    BL      send_instruction_wbr_sprite   @ Chama send_instruction
 
 if_sp:
 
     ORR     R6, R6, #0x20000000           @ Habilita sprite se sp for 1
     MOV     R1, R6                        @ Armazena os dados finais em R1
 
-send_instruction:
+send_instruction_wbr_sprite:
 
     BL      send_instruction               @ Chama send_instruction
 
@@ -198,8 +198,8 @@ send_instruction:
     BX      LR                            @ Retorna
 
 
-.type instrucao_wbm, %function
-instrucao_wbm:
+.type instruction_wbm, %function
+instruction_wbm:
 
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
@@ -233,8 +233,8 @@ instrucao_wbm:
 
 
 
-.type instrucao_wsm, %function
-instrucao_wsm:
+.type instruction_wsm, %function
+instruction_wsm:
 
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
@@ -268,8 +268,8 @@ instrucao_wsm:
 
 
 
-.type instrucao_dp, %function
-instrucao_dp:
+.type instruction_dp, %function
+instruction_dp:
 
     PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #32                   @ Aloca espaço na pilha para 8 parâmetros (address, ref_x, ref_y, size, R, G, B, shape)
@@ -308,21 +308,31 @@ instrucao_dp:
     ORR     R1, R1, R3                    @ dados |= ref_x
 
     CMP     R9, #0                        @ Verifica se shape é 0
-    BEQ     no_shape                      @ Se shape == 0, vai para o fluxo normal
+    BNE     if_shape                      @ Se shape == 0, vai para o fluxo normal
 
     ORR     R1, R1, #0x80000000           @ Se shape for 1, habilita bit 31
 
-no_shape:
+if_shape:
 
     LSL     R2, R2, #4                    @ address << 4
     LDR     R0, =DP                       @ Carrega o opcode DP
     ORR     R0, R2, R0                    @ opcode_reg = (address << 4) | opcode
 
+send_instruction_dp:
+
     BL      send_instruction               @ Chama send_instruction
 
-    ADD     SP, SP, #32                   @ Libera o espaço alocado na pilha
+    ADD     SP, SP, #32                   @ Libera espaço na pilha
     POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
+
+
+    CMP     R4, #0                        @ Verifica se sp é 0
+    BNE     if_sp                         @ Se sp != 0, vai para habilitar sprite
+
+    MOV     R1, R6                        @ Armazena os dados finais em R1
+    BL      send_instruction_wbr_sprite   @ Chama send_instruction
+
 
 
 
