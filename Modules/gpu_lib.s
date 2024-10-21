@@ -46,7 +46,7 @@ gpu_init:
     @ Atribui os ponteiros às regiões de memória
     LDR     R6, =DATA_A                  @ Offset de DATA_A
     ADD     R6, R5, R6                   @ DATA_A_PTR = LW_virtual + DATA_A
-    STR     R6, [R4, #0]                     @ Armazena o ponteiro em DATA_A_PTR
+    STR     R6, [R4, #0]                 @ Armazena o ponteiro em DATA_A_PTR
 
     LDR     R6, =DATA_B                  @ Offset de DATA_B
     ADD     R6, R5, R6                   @ DATA_B_PTR = LW_virtual + DATA_B
