@@ -32,7 +32,7 @@ gpu_init:
     LDR     R0, =DEV_MEM_PATH            @ Carrega o caminho do arquivo
     MOV     R7, #5                       @ syscall: open
     MOV     R1, #2                       @ O_RDWR
-    SWI     0                            @ Chama a syscall
+    SVC     0                            @ Chama a syscall
     MOV     R4, R0                       @ fd é retornado em R0
     CMP     R0, #-1                      @ Verifica se fd é -1
     BLT     .error_open                  @ Se sim, vai para erro
@@ -42,7 +42,7 @@ gpu_init:
     MOV     R2, #3                       @ PROT_READ | PROT_WRITE
     MOV     R3, #1                       @ MAP_SHARED
     MOV     R7, #192                     @ syscall: mmap (Falta confirmar 192)
-    SWI     0                            @ Chama a syscall
+    SVC     0                            @ Chama a syscall
     LDR     R1, =LW_VIRTUAL              @ Carrega o endereço de LW_virtual
     STR     R0, [R1]                     @ Armazena o ponteiro de memória virtual retornado por mmap
     LDR     R5, [R1]                     @ Carrega LW_virtual
@@ -91,7 +91,7 @@ gpu_exit:
     LDR     R0, =LW_VIRTUAL              @ Carrega LW_virtual
     LDR     R1, =LW_BRIDGE_SPAN          @ Carrega o tamanho do mapeamento
     MOV     R7, #91                      @ syscall: munmap
-    SWI     0                            @ Chama a syscall
+    SVC     0                            @ Chama a syscall
     BX      LR
 
 .type send_instruction, %function
@@ -103,15 +103,13 @@ send_instruction:
     LDR     R3, =START_PTR                @ Carrega START_PTR
     STR     R4, [R3]                      @ Desabilita o sinal de start
 
-    LDR     R4, [SP, #8]                  @ Carrega opcode_enderecamentos (segundo argumento)
     LDR     R3, =DATA_A_PTR               @ Carrega DATA_A_PTR
     LDR     R3, [R3]                      @ Carrega o endereço armazenado em DATA_A_PTR
-    STR     R4, [R3]                      @ Escreve opcode_enderecamentos em DATA_A_PTR
+    STR     R0, [R3]                      @ Escreve o opcode (R0) em DATA_A_PTR
 
-    LDR     R4, [SP, #4]                  @ Carrega dados (primeiro argumento)
     LDR     R3, =DATA_B_PTR               @ Carrega DATA_B_PTR
     LDR     R3, [R3]                      @ Carrega o endereço armazenado em DATA_B_PTR
-    STR     R4, [R3]                      @ Escreve dados em DATA_B_PTR
+    STR     R1, [R3]                      @ Escreve os dados (R1) em DATA_B_PTR
 
     MOV     R4, #1                        @ Habilita o sinal de start
     STR     R4, [R3]                      @ Escreve em START_PTR
@@ -120,6 +118,7 @@ send_instruction:
 
     POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
+
 
 .type instruction_wbr, %function
 instruction_wbr:
