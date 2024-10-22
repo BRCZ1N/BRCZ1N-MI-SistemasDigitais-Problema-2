@@ -5,13 +5,15 @@ h2p_lw_dataA_addr:      .word 0                   @ Ponteiro para o registrador 
 h2p_lw_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
 h2p_lw_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
 h2p_lw_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
+h2p_lw_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderização da tela já foi finalizada
+h2p_lw_result_pulseCounter_addr: .word 0          @ Ponteiro para o registrador do contador de tempo para renderização de tela
 DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memória
 DATA_A_BASE:            .word 0x80                @ Barramento “A” de dados do buffer de instrução.
 DATA_B_BASE:            .word 0x70                @ Barramento “B” de dados do buffer de instrução.
-RESET_PULSECOUNTER:     .word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
-SCREEN:                 .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
-WRFULL:                 .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
-WRREG:                  .word 0xc0                @ Sinal de escrita do buffer de instrução.
+RESET_PULSECOUNTER_BASE:.word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
+SCREEN_BASE:            .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
+WRFULL_BASE:            .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
+WRREG_BASE:             .word 0xc0                @ Sinal de escrita do buffer de instrução.
 ALT_LWFPGASLVS_OFST:    .word 0xFF200000          @ Offset do barramento de FPGA    
 HW_REGS_BASE:           .word 0xFC000000          @ Base dos registradores de hardware
 HW_REGS_SPAN:           .word 0x04000000          @ Tamanho do espaço de registradores
@@ -67,7 +69,6 @@ gpuMapping:
     LDR R2, =ALT_LWFPGASLVS_OFST
     LDR R3, =HW_REGS_MASK
 
-    @ h2p_lw_dataA_addr
     LDR R4, =DATA_A_BASE
     ADD R4, R4, R2                @ ALT_LWFPGASLVS_OFST + DATA_A_BASE
     AND R4, R4, R3                @ Aplicar a máscara HW_REGS_MASK
@@ -77,7 +78,6 @@ gpuMapping:
     LDR R1, =h2p_lw_dataA_addr
     STR R4, [R1]                  @ Salva o endereço calculado em h2p_lw_dataA_addr
 
-    @ h2p_lw_dataB_addr
     LDR R4, =DATA_B_BASE
     ADD R4, R4, R2
     AND R4, R4, R3
@@ -85,7 +85,6 @@ gpuMapping:
     LDR R1, =h2p_lw_dataB_addr
     STR R4, [R1]
 
-    @ h2p_lw_wrReg_addr
     LDR R4, =WRREG_BASE
     ADD R4, R4, R2
     AND R4, R4, R3
@@ -93,7 +92,6 @@ gpuMapping:
     LDR R1, =h2p_lw_wrReg_addr
     STR R4, [R1]
 
-    @ h2p_lw_wrFull_addr
     LDR R4, =WRFULL_BASE
     ADD R4, R4, R2
     AND R4, R4, R3
@@ -101,7 +99,6 @@ gpuMapping:
     LDR R1, =h2p_lw_wrFull_addr
     STR R4, [R1]
 
-    @ h2p_lw_screen_addr
     LDR R4, =SCREEN_BASE
     ADD R4, R4, R2
     AND R4, R4, R3
@@ -109,7 +106,6 @@ gpuMapping:
     LDR R1, =h2p_lw_screen_addr
     STR R4, [R1]
 
-    @ h2p_lw_result_pulseCounter_addr
     LDR R4, =RESET_PULSECOUNTER_BASE
     ADD R4, R4, R2
     AND R4, R4, R3
@@ -122,6 +118,7 @@ gpuMapping:
     BX LR
 
 error_open_mem:
+
     LDR R0, =error_msg_open
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
@@ -130,6 +127,7 @@ error_open_mem:
     BX LR
 
 error_mmap:
+
     LDR R0, =error_msg_mmap
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: mmap() failed...\n")
@@ -208,6 +206,7 @@ end_sendInstruction:
 
 .type dataA, %function
 dataA:
+
     PUSH {R4, R5, LR}
     MOV R4, #0              @ Inicializa o valor de data = 0
     CMP R0, #0              @ Verifica se opcode == 0
@@ -220,6 +219,7 @@ dataA:
     BEQ opcode_mem
 
 opcode_0:
+
     ORR R4, R4, R1          @ data = data | reg
     LSL R4, R4, #4          @ data = data << 4
     ORR R4, R4, R0          @ data = data | opcode
@@ -237,6 +237,7 @@ end_dataA:
 
 .type setPolygon, %function
 setPolygon:
+
     PUSH {R4, R5, R6, R7, LR}
     
     @ Chama dataA(opcode, 0, address)
@@ -266,6 +267,7 @@ setPolygon:
 
 .type setSprite, %function
 setSprite:
+
     PUSH {R4, R5, LR}
     
     @ Chama dataA(0, registrador, 0)
@@ -294,13 +296,14 @@ setSprite:
 
 .type setBackgroundColor, %function
 setBackgroundColor:
+
     PUSH {R4, LR}
 
     @ Chama dataA(0, 0, 0)
     MOV R0, #0              @ opcode = 0
     MOV R1, #0              @ reg = 0
     MOV R2, #0              @ memory_address = 0
-    BL dataA         @ Chama dataA
+    BL dataA                @ Chama dataA
     MOV R4, R0              @ Armazena o resultado de dataA (R4)
 
     @ Construir color
@@ -320,6 +323,7 @@ setBackgroundColor:
 
 .type setBackgroundBlock, %function
 setBackgroundBlock:
+
     PUSH {R4, R5, LR}
 
     @ Calcular address = (line * 80) + column
