@@ -6,11 +6,16 @@ h2p_lw_dataB_addr:      .word 0                   @ Ponteiro para o registrador 
 h2p_lw_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
 h2p_lw_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
 DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memória
-HW_REGS_SPAN:           .word 0x40000             @ Tamanho do espaço de registradores
-HW_REGS_BASE:           .word 0xff200000          @ Base dos registradores de hardware
-ALT_LWFPGASLVS_OFST:    .word 0xC0000000          @ Offset do barramento de FPGA
-DATA_A_BASE:            .word 0x00000000          @ Endereço base de dados A
-HW_REGS_MASK:           .word 0xFFFFF000          @ Máscara dos registradores
+DATA_A_BASE:            .word 0x80                @ Barramento “A” de dados do buffer de instrução.
+DATA_B_BASE:            .word 0x70                @ Barramento “B” de dados do buffer de instrução.
+RESET_PULSECOUNTER:     .word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
+SCREEN:                 .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
+WRFULL:                 .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
+WRREG:                  .word 0xc0                @ Sinal de escrita do buffer de instrução.
+ALT_LWFPGASLVS_OFST:    .word 0xFF200000          @ Offset do barramento de FPGA    
+HW_REGS_BASE:           .word 0xFC000000          @ Base dos registradores de hardware
+HW_REGS_SPAN:           .word 0x04000000          @ Tamanho do espaço de registradores
+HW_REGS_MASK:           .word 0x03FFFFFF          @ Máscara dos registradores
 error_msg_open:         .asciz "[ERROR]: Você não pode abrir: \"/dev/mem\"...\n"
 error_msg_mmap:         .asciz "[ERROR]: Falhou o mmap...\n"
 error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
@@ -24,12 +29,12 @@ error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
 .global setSprite
 .global setBackgroundColor
 .global setBackgroundBlock
-.global isFull
+
 
 .type gpuMapping, %function
 gpuMapping:
 
-    PUSH {R4, LR}
+    PUSH {R4, R5, R6, LR}
 
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
@@ -37,14 +42,14 @@ gpuMapping:
     ORR R1, R1, #040000           @ O_SYNC
     MOV R7, #5                    @ syscall number for open (Linux ARM)
     SVC #0                        @ Faz a chamada de sistema (open)
-    CMP R0, #0
-    BLT error_open_mem
+    CMP R0, #-1
+    BEQ error_open_mem
     LDR R1, =fd
     STR R0, [R1]                  @ Salva o resultado da chamada em fd
 
     @ Mmap HW_REGS_BASE
     MOV R0, #0                    @ addr: NULL
-    LDR R1, =HW_REGS_SPAN        @ length
+    LDR R1, =HW_REGS_SPAN         @ length
     MOV R2, #3                    @ prot: PROT_READ | PROT_WRITE
     MOV R3, #1                    @ flags: MAP_SHARED
     LDR R4, =fd                   @ Carregar fd
@@ -58,8 +63,62 @@ gpuMapping:
     LDR R1, =virtual_base
     STR R0, [R1]                  @ Salva o ponteiro virtual_base
 
+    @ Calcula os endereços mapeados
+    LDR R2, =ALT_LWFPGASLVS_OFST
+    LDR R3, =HW_REGS_MASK
+
+    @ h2p_lw_dataA_addr
+    LDR R4, =DATA_A_BASE
+    ADD R4, R4, R2                @ ALT_LWFPGASLVS_OFST + DATA_A_BASE
+    AND R4, R4, R3                @ Aplicar a máscara HW_REGS_MASK
+    LDR R1, =virtual_base
+    LDR R0, [R1]                  @ Carrega virtual_base
+    ADD R4, R0, R4                @ virtual_base + offset calculado
+    LDR R1, =h2p_lw_dataA_addr
+    STR R4, [R1]                  @ Salva o endereço calculado em h2p_lw_dataA_addr
+
+    @ h2p_lw_dataB_addr
+    LDR R4, =DATA_B_BASE
+    ADD R4, R4, R2
+    AND R4, R4, R3
+    ADD R4, R0, R4
+    LDR R1, =h2p_lw_dataB_addr
+    STR R4, [R1]
+
+    @ h2p_lw_wrReg_addr
+    LDR R4, =WRREG_BASE
+    ADD R4, R4, R2
+    AND R4, R4, R3
+    ADD R4, R0, R4
+    LDR R1, =h2p_lw_wrReg_addr
+    STR R4, [R1]
+
+    @ h2p_lw_wrFull_addr
+    LDR R4, =WRFULL_BASE
+    ADD R4, R4, R2
+    AND R4, R4, R3
+    ADD R4, R0, R4
+    LDR R1, =h2p_lw_wrFull_addr
+    STR R4, [R1]
+
+    @ h2p_lw_screen_addr
+    LDR R4, =SCREEN_BASE
+    ADD R4, R4, R2
+    AND R4, R4, R3
+    ADD R4, R0, R4
+    LDR R1, =h2p_lw_screen_addr
+    STR R4, [R1]
+
+    @ h2p_lw_result_pulseCounter_addr
+    LDR R4, =RESET_PULSECOUNTER_BASE
+    ADD R4, R4, R2
+    AND R4, R4, R3
+    ADD R4, R0, R4
+    LDR R1, =h2p_lw_result_pulseCounter_addr
+    STR R4, [R1]
+
     MOV R0, #1                    @ Retorno de sucesso
-    POP {R4, LR}
+    POP {R4, R5, R6, LR}
     BX LR
 
 error_open_mem:
@@ -67,7 +126,7 @@ error_open_mem:
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
     MOV R0, #-1
-    POP {R4, LR}
+    POP {R4, R5, R6, LR}
     BX LR
 
 error_mmap:
@@ -79,7 +138,7 @@ error_mmap:
     MOV R7, #6                    @ syscall number for close (Linux ARM)
     SVC #0
     MOV R0, #-1
-    POP {R4, LR}
+    POP {R4, R5, R6, LR}
     BX LR
 
 .type closeGpuMapping, %function
