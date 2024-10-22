@@ -36,7 +36,7 @@ error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
 .type gpuMapping, %function
 gpuMapping:
 
-    PUSH {R4, R5, R6, LR}
+    PUSH {LR}
 
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
@@ -114,7 +114,7 @@ gpuMapping:
     STR R4, [R1]
 
     MOV R0, #1                    @ Retorno de sucesso
-    POP {R4, R5, R6, LR}
+    POP {LR}
     BX LR
 
 error_open_mem:
@@ -123,7 +123,7 @@ error_open_mem:
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
     MOV R0, #-1
-    POP {R4, R5, R6, LR}
+    POP {LR}
     BX LR
 
 error_mmap:
@@ -136,7 +136,7 @@ error_mmap:
     MOV R7, #6                    @ syscall number for close (Linux ARM)
     SVC #0
     MOV R0, #-1
-    POP {R4, R5, R6, LR}
+    POP {LR}
     BX LR
 
 .type closeGpuMapping, %function
@@ -238,14 +238,14 @@ end_dataA:
 .type setPolygon, %function
 setPolygon:
 
-    POP{R4,R5,R6}
-    PUSH {R0,R1,R2,R3,R4,R5,R6,LR}
+    POP {R4, R5, R6}
+    PUSH {R0, R1, R2, R3, R4, R5, R6, LR}
     
     @ Chama dataA(opcode, 0, address)
     MOV R1, #0              @ reg = 0
     BL dataA                @ Chama dataA
     MOV R7, R0              @ Armazena o resultado em dataA (R4)
-    POP {R0,R1,R2,R3,R4,R5,R6}
+    POP {R0, R1, R2, R3, R4, R5, R6}
 
     @ Construir dataB
     MOV R8, #0              @ Inicializa dataB = 0
@@ -270,8 +270,8 @@ setPolygon:
 .type setSprite, %function
 setSprite:
 
-    POP{R4}
-    PUSH {R0,R1,R2,R3,R4,LR}
+    POP {R4}
+    PUSH {R0, R1, R2, R3, R4, LR}
     
     @ Chama dataA(0, registrador, 0)
     MOV R1, R0
@@ -279,7 +279,7 @@ setSprite:
     MOV R2, #0              @ memory_address = 0
     BL dataA                @ Chama dataA
     MOV R6, R0              @ Armazena o resultado em dataA (R4)
-    POP {R0,R1,R2,R3,R4}
+    POP {R0, R1, R2, R3, R4}
     
     @ Construir dataB
     MOV R5, #0              @ Inicializa dataB = 0
@@ -302,7 +302,7 @@ setSprite:
 .type setBackgroundColor, %function
 setBackgroundColor:
 
-    PUSH {R0,R1,R2,LR}
+    PUSH {R0, R1, R2, LR}
 
     @ Chama dataA(0, 0, 0)
     MOV R0, #0              @ opcode = 0
@@ -311,7 +311,7 @@ setBackgroundColor:
     BL dataA                @ Chama dataA
     MOV R3, R0              @ Armazena o resultado de dataA (R4)
 
-    POP {R0,R1,R2}
+    POP {R0, R1, R2}
 
     @ Construir color
     MOV R4, R2              @ color = B
@@ -331,8 +331,8 @@ setBackgroundColor:
 .type setBackgroundBlock, %function
 setBackgroundBlock:
 
-    POP{R4}
-    PUSH {R0,R1,R2,R3,R4,LR}
+    POP {R4}
+    PUSH {R0, R1, R2, R3, R4, LR}
 
     @ Calcular address = (line * 80) + column
     MOV R4, R2              @ R4 = line
@@ -346,7 +346,7 @@ setBackgroundBlock:
     MOV R2, R4              @ memory_address = address
     BL dataA                @ Chama dataA
     MOV R5, R0              @ Armazena o resultado de dataA (R5)
-    POP {R0,R1,R2,R3,R4}
+    POP {R0, R1, R2, R3, R4}
 
     @ Construir color
     MOV R6, R4              @ color = B
