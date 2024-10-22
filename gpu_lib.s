@@ -23,6 +23,8 @@ error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
 .global setPolygon
 .global setSprite
 .global setBackgroundColor
+.global setBackgroundBlock
+.global isFull
 
 .type gpuMapping, %function
 gpuMapping:
@@ -110,6 +112,7 @@ error_munmap:
     POP {LR}
     BX LR
 
+.type isFull, %function
 isFull:
 
     LDR R1, =h2p_lw_wrFull_addr
