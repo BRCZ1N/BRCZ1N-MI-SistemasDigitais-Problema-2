@@ -98,8 +98,6 @@ gpu_exit:
 .type send_instruction, %function
 send_instruction:
 
-    PUSH    {LR}                          @ Salva o registrador de link
-
     MOV     R4, #0                        @ Desabilita o sinal de start
     LDR     R3, =START_PTR                @ Carrega START_PTR
     STR     R4, [R3]                      @ Desabilita o sinal de start
@@ -117,23 +115,17 @@ send_instruction:
     MOV     R4, #0                        @ Desabilita o sinal de start
     STR     R4, [R3]                      @ Escreve em START_PTR
 
-    POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
 
 .type instruction_wbr, %function
 instruction_wbr:
 
-    PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #12                   @ Aloca espaço na pilha para 3 parâmetros (r, g, b)
 
-    STR     R0, [SP, #0]                  @ Armazena r na pilha
+    STR     R0, [SP, #8]                  @ Armazena r na pilha
     STR     R1, [SP, #4]                  @ Armazena g na pilha
-    STR     R2, [SP, #8]                  @ Armazena b na pilha
-
-    LDR     R0, [SP, #0]                  @ Carrega r
-    LDR     R1, [SP, #4]                  @ Carrega g
-    LDR     R2, [SP, #8]                  @ Carrega b
+    STR     R2, [SP, #0]                  @ Armazena b na pilha
 
     LSL     R1, R1, #3                    @ g << 3 (desloca g para a esquerda 3 bits)
     LSL     R2, R2, #6                    @ b << 6 (desloca b para a esquerda 6 bits)
@@ -144,33 +136,31 @@ instruction_wbr:
     LDR     R0, =WBR                      @ Carrega o opcode WBR
     BL      send_instruction              @ Chama send_instruction
 
+    LDR     R0, [SP, #8]                  @ Carrega r
+    LDR     R1, [SP, #4]                  @ Carrega g
+    LDR     R2, [SP, #0]                  @ Carrega b
+
     ADD     SP, SP, #12                   @ Libera o espaço alocado na pilha
-    POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
 
 .type instruction_wbr_sprite, %function
 instruction_wbr_sprite:
 
-    PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (reg, offset, x, y, sp)
 
-    STR     R0, [SP, #0]                  @ Armazena reg (R0) na pilha
-    STR     R1, [SP, #4]                  @ Armazena offset na pilha
+    LDR     R4, [SP, #0]                  @ Armazena R na pilha
+    
+    STR     R0, [SP, #16]                 @ Armazena reg (R0) na pilha
+    STR     R1, [SP, #12]                 @ Armazena offset na pilha
     STR     R2, [SP, #8]                  @ Armazena x na pilha
-    STR     R3, [SP, #12]                 @ Armazena y na pilha
-    STR     R4, [SP, #16]                 @ Armazena sp na pilha
+    STR     R3, [SP, #4]                  @ Armazena y na pilha
+    STR     R4, [SP, #0]                  @ Armazena sp na pilha
 
     LDR     R5, =WBR                      @ Carrega o opcode WBR
 
-    LDR     R0, [SP, #0]                  @ Carrega reg de R0
     LSL     R0, R0, #4                    @ reg << 4
     ORR     R0, R0, R5                    @ opcode_reg = (reg << 4) | opcode
-
-    LDR     R1, [SP, #4]                  @ Carrega offset de R1
-    LDR     R2, [SP, #8]                  @ Carrega x de R2
-    LDR     R3, [SP, #12]                 @ Carrega y de R3
-    LDR     R4, [SP, #16]                 @ Carrega sp de R4
 
     MOV     R6, R1                        @ Inicializa dados com offset
     LSL     R3, R3, #9                    @ y << 9
@@ -188,28 +178,32 @@ send_instruction_wbr_sprite:
 
     BL      send_instruction              @ Chama send_instruction
 
+    LDR     R0, [SP, #16]                 @ Armazena reg (R0) na pilha
+    LDR     R1, [SP, #12]                 @ Armazena offset na pilha
+    LDR     R2, [SP, #8]                  @ Armazena x na pilha
+    LDR     R3, [SP, #4]                  @ Armazena y na pilha
+    LDR     R4, [SP, #0]                  @ Armazena sp na pilha
+
     ADD     SP, SP, #20                   @ Libera espaço na pilha
-    POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
 
 .type instruction_wbm, %function
 instruction_wbm:
 
-    PUSH    {LR}                          @ Salva o registrador de link
-    SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
+    SUB     SP, SP, #16                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
 
-    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
-    STR     R1, [SP, #4]                  @ Armazena R na pilha
-    STR     R2, [SP, #8]                  @ Armazena G na pilha
-    STR     R3, [SP, #12]                 @ Armazena B na pilha
+    STR     R0, [SP, #12]                 @ Armazena address (R0) na pilha
+    STR     R1, [SP, #8]                  @ Armazena R na pilha
+    STR     R2, [SP, #4]                  @ Armazena G na pilha
+    STR     R3, [SP, #0]                  @ Armazena B na pilha
 
     LDR     R1, =WBM                      @ Carrega o opcode WBM
 
-    LDR     R2, [SP, #0]                  @ Carrega address de R0
-    LDR     R3, [SP, #4]                  @ Carrega R
-    LDR     R4, [SP, #8]                  @ Carrega G
-    LDR     R5, [SP, #12]                 @ Carrega B
+    LDR     R2, [SP, #12]                 @ Carrega address de R0
+    LDR     R3, [SP, #8]                  @ Carrega R
+    LDR     R4, [SP, #4]                  @ Carrega G
+    LDR     R5, [SP, #0]                  @ Carrega B
 
     LSL     R4, R4, #3                    @ G << 3
     LSL     R5, R5, #6                    @ B << 6
@@ -222,29 +216,30 @@ instruction_wbm:
 
     BL      send_instruction              @ Chama send_instruction
 
-    ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
-    POP     {LR}                          @ Restaura o registrador de link
+    LDR     R0, [SP, #12]                 @ Carrega address (R0) da pilha
+    LDR     R1, [SP, #8]                  @ Carrega R da pilha
+    LDR     R2, [SP, #4]                  @ Carrega G da pilha
+    LDR     R3, [SP, #0]                  @ Carrega B da pilha
+
+    ADD     SP, SP, #16                   @ Libera o espaço alocado na pilha
     BX      LR                            @ Retorna
-
-
 
 .type instruction_wsm, %function
 instruction_wsm:
 
-    PUSH    {LR}                          @ Salva o registrador de link
-    SUB     SP, SP, #20                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
+    SUB     SP, SP, #16                   @ Aloca espaço na pilha para 5 parâmetros (address, R, G, B)
 
-    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
-    STR     R1, [SP, #4]                  @ Armazena R na pilha
-    STR     R2, [SP, #8]                  @ Armazena G na pilha
-    STR     R3, [SP, #12]                 @ Armazena B na pilha
+    STR     R0, [SP, #12]                 @ Armazena address (R0) na pilha
+    STR     R1, [SP, #8]                  @ Armazena R na pilha
+    STR     R2, [SP, #4]                  @ Armazena G na pilha
+    STR     R3, [SP, #0]                  @ Armazena B na pilha
 
     LDR     R1, =WSM                      @ Carrega o opcode WSM
 
-    LDR     R2, [SP, #0]                  @ Carrega address de R0
-    LDR     R3, [SP, #4]                  @ Carrega R
-    LDR     R4, [SP, #8]                  @ Carrega G
-    LDR     R5, [SP, #12]                 @ Carrega B
+    LDR     R2, [SP, #12]                 @ Carrega address de R0
+    LDR     R3, [SP, #8]                  @ Carrega R
+    LDR     R4, [SP, #4]                  @ Carrega G
+    LDR     R5, [SP, #0]                  @ Carrega B
 
     LSL     R4, R4, #3                    @ G << 3
     LSL     R5, R5, #6                    @ B << 6
@@ -257,33 +252,42 @@ instruction_wsm:
 
     BL      send_instruction              @ Chama send_instruction
 
-    ADD     SP, SP, #20                   @ Libera o espaço alocado na pilha
-    POP     {LR}                          @ Restaura o registrador de link
+    LDR     R0, [SP, #12]                 @ Carrega address (R0) da pilha
+    LDR     R1, [SP, #8]                  @ Carrega R da pilha
+    LDR     R2, [SP, #4]                  @ Carrega G na pilha
+    LDR     R3, [SP, #0]                  @ Carrega B na pilha
+
+    ADD     SP, SP, #16                   @ Libera o espaço alocado na pilha
     BX      LR                            @ Retorna
 
 .type instruction_dp, %function
 instruction_dp:
 
-    PUSH    {LR}                          @ Salva o registrador de link
     SUB     SP, SP, #32                   @ Aloca espaço na pilha para 8 parâmetros (address, ref_x, ref_y, size, R, G, B, shape)
 
-    STR     R0, [SP, #0]                  @ Armazena address (R0) na pilha
-    STR     R1, [SP, #4]                  @ Armazena ref_x na pilha
-    STR     R2, [SP, #8]                  @ Armazena ref_y na pilha
-    STR     R3, [SP, #12]                 @ Armazena size na pilha
-    STR     R4, [SP, #16]                 @ Armazena R na pilha
-    STR     R5, [SP, #20]                 @ Armazena G na pilha
-    STR     R6, [SP, #24]                 @ Armazena B na pilha
-    STR     R7, [SP, #28]                 @ Armazena shape na pilha
+    @Pegando os parametros posteriores para rearranjar a pilha
+    LDR     R4, [SP, #0]                  @ Armazena R na pilha
+    LDR     R5, [SP, #4]                  @ Armazena G na pilha
+    LDR     R6, [SP, #8]                  @ Armazena B na pilha
+    LDR     R7, [SP, #12]                 @ Armazena shape na pilha
 
-    LDR     R2, [SP, #0]                  @ Carrega address de R0
-    LDR     R3, [SP, #4]                  @ Carrega ref_x
-    LDR     R4, [SP, #8]                  @ Carrega ref_y
-    LDR     R5, [SP, #12]                 @ Carrega size
-    LDR     R6, [SP, #16]                 @ Carrega R
-    LDR     R7, [SP, #20]                 @ Carrega G
-    LDR     R8, [SP, #24]                 @ Carrega B
-    LDR     R9, [SP, #28]                 @ Carrega shape
+    STR     R0, [SP, #28]                 @ Armazena address (R0) na pilha
+    STR     R1, [SP, #24]                 @ Armazena ref_x na pilha
+    STR     R2, [SP, #20]                 @ Armazena ref_y na pilha
+    STR     R3, [SP, #16]                 @ Armazena size na pilha
+    STR     R4, [SP, #12]                 @ Armazena R na pilha
+    STR     R5, [SP, #8]                  @ Armazena G na pilha
+    STR     R6, [SP, #4]                  @ Armazena B na pilha
+    STR     R7, [SP, #0]                  @ Armazena shape na pilha
+
+    LDR     R2, [SP, #28]                 @ Carrega address de R0
+    LDR     R3, [SP, #24]                 @ Carrega ref_x
+    LDR     R4, [SP, #20]                 @ Carrega ref_y
+    LDR     R5, [SP, #16]                 @ Carrega size
+    LDR     R6, [SP, #12]                 @ Carrega R
+    LDR     R7, [SP, #8]                  @ Carrega G
+    LDR     R8, [SP, #4]                  @ Carrega B
+    LDR     R9, [SP, #0]                  @ Carrega shape
 
     LSL     R7, R7, #3                    @ G << 3
     LSL     R8, R8, #6                    @ B << 6
@@ -313,8 +317,16 @@ send_instruction_dp:
 
     BL      send_instruction              @ Chama send_instruction
 
+    LDR     R0, [SP, #28]                 @ Carrega address (R0) da pilha
+    LDR     R1, [SP, #24]                 @ Carrega ref_x da pilha
+    LDR     R2, [SP, #20]                 @ Carrega ref_y da pilha
+    LDR     R3, [SP, #16]                 @ Carrega size da pilha
+    LDR     R4, [SP, #12]                 @ Carrega R da pilha
+    LDR     R5, [SP, #8]                  @ Carrega G da pilha
+    LDR     R6, [SP, #4]                  @ Carrega B da pilha
+    LDR     R7, [SP, #0]                  @ Carrega shape da pilha
+
     ADD     SP, SP, #32                   @ Libera espaço na pilha
-    POP     {LR}                          @ Restaura o registrador de link
     BX      LR                            @ Retorna
 
 
