@@ -238,43 +238,48 @@ end_dataA:
 .type setPolygon, %function
 setPolygon:
 
-    PUSH {R4, R5, R6, R7, LR}
+    POP{R4,R5,R6}
+    PUSH {R0,R1,R2,R3,R4,R5,R6,LR}
     
     @ Chama dataA(opcode, 0, address)
     MOV R1, #0              @ reg = 0
-    BL dataA         @ Chama dataA
-    MOV R4, R0              @ Armazena o resultado em dataA (R4)
-    
+    BL dataA                @ Chama dataA
+    MOV R7, R0              @ Armazena o resultado em dataA (R4)
+    POP {R0,R1,R2,R3,R4,R5,R6}
+
     @ Construir dataB
-    MOV R5, #0              @ Inicializa dataB = 0
-    ORR R5, R5, R3          @ dataB = dataB | form
-    LSL R5, R5, #9          @ dataB = dataB << 9
-    ORR R5, R5, R2          @ dataB = dataB | color
-    LSL R5, R5, #4          @ dataB = dataB << 4
-    ORR R5, R5, R4          @ dataB = dataB | mult
-    LSL R5, R5, #9          @ dataB = dataB << 9
-    ORR R5, R5, R6          @ dataB = dataB | ref_point_y
-    LSL R5, R5, #9          @ dataB = dataB << 9
-    ORR R5, R5, R7          @ dataB = dataB | ref_point_x
+    MOV R8, #0              @ Inicializa dataB = 0
+    ORR R8, R8, R3          @ dataB = dataB | form
+    LSL R8, R5, #9          @ dataB = dataB << 9
+    ORR R8, R8, R2          @ dataB = dataB | color
+    LSL R8, R5, #4          @ dataB = dataB << 4
+    ORR R8, R8, R4          @ dataB = dataB | mult
+    LSL R8, R5, #9          @ dataB = dataB << 9
+    ORR R8, R8, R6          @ dataB = dataB | ref_point_y
+    LSL R8, R5, #9          @ dataB = dataB << 9
+    ORR R8, R8, R5          @ dataB = dataB | ref_point_x
     
     @ Chama sendInstruction(dataA, dataB)
-    MOV R0, R4              @ dataA -> R0
-    MOV R1, R5              @ dataB -> R1
+    MOV R0, R7              @ dataA -> R0
+    MOV R1, R8              @ dataB -> R1
     BL sendInstruction
 
-    POP {R4, R5, R6, R7, LR}
+    POP {LR}
     BX LR
 
 .type setSprite, %function
 setSprite:
 
-    PUSH {R4, R5, LR}
+    POP{R4}
+    PUSH {R0,R1,R2,R3,R4,LR}
     
     @ Chama dataA(0, registrador, 0)
+    MOV R1, R0
     MOV R0, #0              @ opcode = 0
     MOV R2, #0              @ memory_address = 0
-    BL dataA         @ Chama dataA
-    MOV R4, R0              @ Armazena o resultado em dataA (R4)
+    BL dataA                @ Chama dataA
+    MOV R6, R0              @ Armazena o resultado em dataA (R4)
+    POP {R0,R1,R2,R3,R4}
     
     @ Construir dataB
     MOV R5, #0              @ Inicializa dataB = 0
@@ -287,44 +292,47 @@ setSprite:
     ORR R5, R5, R3          @ dataB = dataB | offset
     
     @ Chama sendInstruction(dataA, dataB)
-    MOV R0, R4              @ dataA -> R0
+    MOV R0, R6              @ dataA -> R0
     MOV R1, R5              @ dataB -> R1
     BL sendInstruction
 
-    POP {R4, R5, LR}
+    POP {LR}
     BX LR
 
 .type setBackgroundColor, %function
 setBackgroundColor:
 
-    PUSH {R4, LR}
+    PUSH {R0,R1,R2,LR}
 
     @ Chama dataA(0, 0, 0)
     MOV R0, #0              @ opcode = 0
     MOV R1, #0              @ reg = 0
     MOV R2, #0              @ memory_address = 0
     BL dataA                @ Chama dataA
-    MOV R4, R0              @ Armazena o resultado de dataA (R4)
+    MOV R3, R0              @ Armazena o resultado de dataA (R4)
+
+    POP {R0,R1,R2}
 
     @ Construir color
-    MOV R5, R3              @ color = B
-    LSL R5, R5, #3          @ color = color << 3
-    ORR R5, R5, R2          @ color = color | G
-    LSL R5, R5, #3          @ color = color << 3
-    ORR R5, R5, R1          @ color = color | R
+    MOV R4, R2              @ color = B
+    LSL R4, R4, #3          @ color = color << 3
+    ORR R4, R4, R1          @ color = color | G
+    LSL R4, R4, #3          @ color = color << 3
+    ORR R4, R4, R0          @ color = color | R
 
     @ Chama sendInstruction(dataA, color)
-    MOV R0, R4              @ dataA -> R0
-    MOV R1, R5              @ color -> R1
+    MOV R0, R3              @ dataA -> R0
+    MOV R1, R4              @ color -> R1
     BL sendInstruction
 
-    POP {R4, LR}
+    POP {LR}
     BX LR
 
 .type setBackgroundBlock, %function
 setBackgroundBlock:
 
-    PUSH {R4, R5, LR}
+    POP{R4}
+    PUSH {R0,R1,R2,R3,R4,LR}
 
     @ Calcular address = (line * 80) + column
     MOV R4, R2              @ R4 = line
@@ -336,22 +344,23 @@ setBackgroundBlock:
     MOV R0, #2              @ opcode = 2
     MOV R1, #0              @ reg = 0
     MOV R2, R4              @ memory_address = address
-    BL dataA         @ Chama dataA
-    MOV R4, R0              @ Armazena o resultado de dataA (R4)
+    BL dataA                @ Chama dataA
+    MOV R5, R0              @ Armazena o resultado de dataA (R5)
+    POP {R0,R1,R2,R3,R4}
 
     @ Construir color
-    MOV R5, R3              @ color = B
-    LSL R5, R5, #3          @ color = color << 3
-    ORR R5, R5, R2          @ color = color | G
-    LSL R5, R5, #3          @ color = color << 3
-    ORR R5, R5, R1          @ color = color | R
+    MOV R6, R4              @ color = B
+    LSL R6, R6, #3          @ color = color << 3
+    ORR R6, R6, R3          @ color = color | G
+    LSL R6, R6, #3          @ color = color << 3
+    ORR R6, R6, R2          @ color = color | R
 
     @ Chama sendInstruction(dataA, color)
-    MOV R0, R4              @ dataA -> R0
-    MOV R1, R5              @ color -> R1
+    MOV R0, R5              @ dataA -> R0
+    MOV R1, R6              @ color -> R1
     BL sendInstruction
 
-    POP {R4, R5, LR}
+    POP {LR}
     BX LR
 
 
