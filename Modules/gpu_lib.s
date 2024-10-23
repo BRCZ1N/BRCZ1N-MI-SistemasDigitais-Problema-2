@@ -40,6 +40,7 @@ gpuMapping:
 
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
+    LDR R0, [R0]
     MOV R1, #2                    @ O_RDWR
     ORR R1, R1, #040000           @ O_SYNC
     MOV R7, #5                    @ syscall number for open (Linux ARM)
@@ -52,11 +53,13 @@ gpuMapping:
     @ Mmap HW_REGS_BASE
     MOV R0, #0                    @ addr: NULL
     LDR R1, =HW_REGS_SPAN         @ length
+    LDR R1, [R1]                  
     MOV R2, #3                    @ prot: PROT_READ | PROT_WRITE
     MOV R3, #1                    @ flags: MAP_SHARED
     LDR R4, =fd                   @ Carregar fd
     LDR R4, [R4]                  @ Carregar o valor de fd
     LDR R5, =HW_REGS_BASE         @ offset: HW_REGS_BASE
+    LDR R5, [R5]
     MOV R7, #192                  @ syscall number for mmap2 (Linux ARM)
     SVC #0                        @ Faz a chamada de sistema (mmap)
     CMP R0, #0                    @ Verifica se o retorno é MAP_FAILED
@@ -67,51 +70,59 @@ gpuMapping:
 
     @ Calcula os endereços mapeados
     LDR R2, =ALT_LWFPGASLVS_OFST
+    LDR R2, [R2]
     LDR R3, =HW_REGS_MASK
+    LDR R3, [R3]
+    LDR R1, =virtual_base
+    LDR R1, [R1]
 
     LDR R4, =DATA_A_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2                @ ALT_LWFPGASLVS_OFST + DATA_A_BASE
     AND R4, R4, R3                @ Aplicar a máscara HW_REGS_MASK
-    LDR R1, =virtual_base
-    LDR R0, [R1]                  @ Carrega virtual_base
-    ADD R4, R0, R4                @ virtual_base + offset calculado
-    LDR R1, =h2p_lw_dataA_addr
-    STR R4, [R1]                  @ Salva o endereço calculado em h2p_lw_dataA_addr
+    ADD R4, R1, R4                @ virtual_base + offset calculado
+    LDR R0, =h2p_lw_dataA_addr
+    STR R4, [R0]                  @ Salva o endereço calculado em h2p_lw_dataA_addr
 
     LDR R4, =DATA_B_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2
     AND R4, R4, R3
-    ADD R4, R0, R4
-    LDR R1, =h2p_lw_dataB_addr
-    STR R4, [R1]
+    ADD R4, R1, R4
+    LDR R0, =h2p_lw_dataB_addr
+    STR R4, [R0]
 
     LDR R4, =WRREG_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2
     AND R4, R4, R3
-    ADD R4, R0, R4
-    LDR R1, =h2p_lw_wrReg_addr
-    STR R4, [R1]
+    ADD R4, R1, R4
+    LDR R0, =h2p_lw_wrReg_addr
+    STR R4, [R0]
 
     LDR R4, =WRFULL_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2
     AND R4, R4, R3
-    ADD R4, R0, R4
-    LDR R1, =h2p_lw_wrFull_addr
-    STR R4, [R1]
+    ADD R4, R1, R4
+    LDR R0, =h2p_lw_wrFull_addr
+    STR R4, [R0]
 
     LDR R4, =SCREEN_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2
     AND R4, R4, R3
-    ADD R4, R0, R4
-    LDR R1, =h2p_lw_screen_addr
-    STR R4, [R1]
+    ADD R4, R1, R4
+    LDR R0, =h2p_lw_screen_addr
+    STR R4, [R0]
 
     LDR R4, =RESET_PULSECOUNTER_BASE
+    LDR R4, [R4]
     ADD R4, R4, R2
     AND R4, R4, R3
-    ADD R4, R0, R4
-    LDR R1, =h2p_lw_result_pulseCounter_addr
-    STR R4, [R1]
+    ADD R4, R1, R4
+    LDR R0, =h2p_lw_result_pulseCounter_addr
+    STR R4, [R0]
 
     MOV R0, #1                    @ Retorno de sucesso
     POP {LR}
@@ -120,6 +131,7 @@ gpuMapping:
 error_open_mem:
 
     LDR R0, =error_msg_open
+    LDR R0, [R0]
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
     MOV R0, #-1
@@ -129,10 +141,11 @@ error_open_mem:
 error_mmap:
 
     LDR R0, =error_msg_mmap
+    LDR R0, [R0]
     MOV R7, #4                    @ syscall number for write (Linux ARM)
     SVC #0                        @ printf("[ERROR]: mmap() failed...\n")
-    LDR R1, =fd
-    LDR R0, [R1]
+    LDR R0, =fd
+    LDR R0, [R0]
     MOV R7, #6                    @ syscall number for close (Linux ARM)
     SVC #0
     MOV R0, #-1
@@ -143,15 +156,16 @@ error_mmap:
 closeGpuMapping:
 
     PUSH {LR}
-    LDR R1, =virtual_base
-    LDR R0, [R1]
+    LDR R0, =virtual_base
+    LDR R0, [R0]
     LDR R1, =HW_REGS_SPAN
+    LDR R1, [R1]
     MOV R7, #91               @ syscall number for munmap (Linux ARM)
     SVC #0                    @ Faz a chamada de sistema (munmap)
     CMP R0, #0
     BNE error_munmap
-    LDR R1, =fd
-    LDR R0, [R1]
+    LDR R0, =fd
+    LDR R0, [R0]
     MOV R7, #6                @ syscall number for close (Linux ARM)
     SVC #0
     POP {LR}
@@ -160,10 +174,11 @@ closeGpuMapping:
 error_munmap:
 
     LDR R0, =error_msg_munmap
+    LDR R0, [R0]
     MOV R7, #4                @ syscall number for write (Linux ARM)
     SVC #0                    @ printf("[ERROR]: munmap() failed...\n")
-    LDR R1, =fd
-    LDR R0, [R1]
+    LDR R0, =fd
+    LDR R0, [R0]
     MOV R7, #6                @ syscall number for close (Linux ARM)
     SVC #0
     POP {LR}
@@ -188,10 +203,13 @@ sendInstruction:
     BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da função
     MOV R2, #0
     LDR R3, =h2p_lw_wrReg_addr
+    LDR R3, [R3]
     STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
     LDR R4, =h2p_lw_dataA_addr
+    LDR R4, [R4]
     STR R0, [R4]              @ *(uint32_t *) h2p_lw_dataA_addr = dataA
     LDR R5, =h2p_lw_dataB_addr
+    LDR R5, [R5]
     STR R1, [R5]              @ *(uint32_t *) h2p_lw_dataB_addr = dataB
     MOV R2, #1
     STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 1
