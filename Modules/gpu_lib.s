@@ -180,28 +180,27 @@ isFull:
 .type sendInstruction, %function
 sendInstruction:
 
-    PUSH {R4, LR}
+    PUSH {R0, R1, LR}
     BL isFull
-    CMP R0, #0
+    MOV R5, R0
+    POP {R0, R1}
+    CMP R5, #0
     BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da função
-    LDR R1, =h2p_lw_wrReg_addr
-    LDR R1, [R1]
     MOV R2, #0
-    STR R2, [R1]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
-    LDR R3, =h2p_lw_dataA_addr
-    LDR R3, [R3]
-    STR R0, [R3]              @ *(uint32_t *) h2p_lw_dataA_addr = dataA
-    LDR R4, =h2p_lw_dataB_addr
-    LDR R4, [R4]
-    STR R1, [R4]              @ *(uint32_t *) h2p_lw_dataB_addr = dataB
+    LDR R3, =h2p_lw_wrReg_addr
+    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
+    LDR R4, =h2p_lw_dataA_addr
+    STR R0, [R4]              @ *(uint32_t *) h2p_lw_dataA_addr = dataA
+    LDR R5, =h2p_lw_dataB_addr
+    STR R1, [R5]              @ *(uint32_t *) h2p_lw_dataB_addr = dataB
     MOV R2, #1
-    STR R2, [R1]              @ *(uint32_t *) h2p_lw_wrReg_addr = 1
+    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 1
     MOV R2, #0
-    STR R2, [R1]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
-	
+    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
+
 end_sendInstruction:
 
-    POP {R4, LR}
+    POP {LR}
     BX LR
 
 .type dataA, %function
@@ -226,11 +225,13 @@ opcode_0:
     B end_dataA
 
 opcode_mem:
+
     ORR R4, R4, R2          @ data = data | memory_address
     LSL R4, R4, #4          @ data = data << 4
     ORR R4, R4, R0          @ data = data | opcode
 
 end_dataA:
+
     MOV R0, R4              @ Retorna data
     POP {R4, R5, LR}
     BX LR
