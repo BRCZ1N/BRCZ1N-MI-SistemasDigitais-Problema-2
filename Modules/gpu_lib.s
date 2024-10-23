@@ -1,28 +1,3 @@
-.section .data
-fd:                     .word 0                   @ Ponteiro para o descritor de arquivo
-virtual_base:           .word 0                   @ Ponteiro para o endereço mapeado na memória
-h2p_lw_dataA_addr:      .word 0                   @ Ponteiro para o registrador de dados A
-h2p_lw_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
-h2p_lw_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
-h2p_lw_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
-h2p_lw_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderização da tela já foi finalizada
-h2p_lw_result_pulseCounter_addr: .word 0          @ Ponteiro para o registrador do contador de tempo para renderização de tela
-DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memória
-DATA_A_BASE:            .word 0x80                @ Barramento “A” de dados do buffer de instrução.
-DATA_B_BASE:            .word 0x70                @ Barramento “B” de dados do buffer de instrução.
-RESET_PULSECOUNTER_BASE:.word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
-SCREEN_BASE:            .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
-WRFULL_BASE:            .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
-WRREG_BASE:             .word 0xc0                @ Sinal de escrita do buffer de instrução.
-ALT_LWFPGASLVS_OFST:    .word 0xFF200000          @ Offset do barramento de FPGA    
-HW_REGS_BASE:           .word 0xFC000000          @ Base dos registradores de hardware
-HW_REGS_SPAN:           .word 0x04000000          @ Tamanho do espaço de registradores
-HW_REGS_MASK:           .word 0x03FFFFFF          @ Máscara dos registradores
-error_msg_open:         .asciz "[ERROR]: Você não pode abrir: \"/dev/mem\"...\n"
-error_msg_mmap:         .asciz "[ERROR]: Falhou o mmap...\n"
-error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
-
-.section .text
 .global gpuMapping
 .global closeGpuMapping
 .global sendInstruction
@@ -31,7 +6,7 @@ error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
 .global setSprite
 .global setBackgroundColor
 .global setBackgroundBlock
-
+.global isFull
 
 .type gpuMapping, %function
 gpuMapping:
@@ -40,11 +15,10 @@ gpuMapping:
 
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
-    LDR R0, [R0]
     MOV R1, #2                    @ O_RDWR
-    ORR R1, R1, #040000           @ O_SYNC
+    MOV R2, #0
     MOV R7, #5                    @ syscall number for open (Linux ARM)
-    SVC #0                        @ Faz a chamada de sistema (open)
+    SVC 0                        @ Faz a chamada de sistema (open)
     CMP R0, #-1
     BEQ error_open_mem
     LDR R1, =fd
@@ -127,13 +101,13 @@ gpuMapping:
     MOV R0, #1                    @ Retorno de sucesso
     POP {LR}
     BX LR
-
+    
 error_open_mem:
 
     LDR R0, =error_msg_open
     LDR R0, [R0]
     MOV R7, #4                    @ syscall number for write (Linux ARM)
-    SVC #0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
+    SVC 0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
     MOV R0, #-1
     POP {LR}
     BX LR
@@ -143,11 +117,11 @@ error_mmap:
     LDR R0, =error_msg_mmap
     LDR R0, [R0]
     MOV R7, #4                    @ syscall number for write (Linux ARM)
-    SVC #0                        @ printf("[ERROR]: mmap() failed...\n")
+    SVC 0                        @ printf("[ERROR]: mmap() failed...\n")
     LDR R0, =fd
     LDR R0, [R0]
     MOV R7, #6                    @ syscall number for close (Linux ARM)
-    SVC #0
+    SVC 0
     MOV R0, #-1
     POP {LR}
     BX LR
@@ -157,17 +131,14 @@ closeGpuMapping:
 
     PUSH {LR}
     LDR R0, =virtual_base
-    LDR R0, [R0]
     LDR R1, =HW_REGS_SPAN
-    LDR R1, [R1]
     MOV R7, #91               @ syscall number for munmap (Linux ARM)
-    SVC #0                    @ Faz a chamada de sistema (munmap)
+    SVC 0                    @ Faz a chamada de sistema (munmap)
     CMP R0, #0
     BNE error_munmap
     LDR R0, =fd
-    LDR R0, [R0]
     MOV R7, #6                @ syscall number for close (Linux ARM)
-    SVC #0
+    SVC 0
     POP {LR}
     BX LR
 
@@ -381,6 +352,30 @@ setBackgroundBlock:
 
     POP {LR}
     BX LR
+
+.data
+    fd:                     .word 0                   @ Ponteiro para o descritor de arquivo
+    virtual_base:           .word 0                   @ Ponteiro para o endereço mapeado na memória
+    h2p_lw_dataA_addr:      .word 0                   @ Ponteiro para o registrador de dados A
+    h2p_lw_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
+    h2p_lw_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
+    h2p_lw_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
+    h2p_lw_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderização da tela já foi finalizada
+    h2p_lw_result_pulseCounter_addr: .word 0          @ Ponteiro para o registrador do contador de tempo para renderização de tela
+    DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memória
+    DATA_A_BASE:            .word 0x80                @ Barramento “A” de dados do buffer de instrução.
+    DATA_B_BASE:            .word 0x70                @ Barramento “B” de dados do buffer de instrução.
+    RESET_PULSECOUNTER_BASE:.word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
+    SCREEN_BASE:            .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
+    WRFULL_BASE:            .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
+    WRREG_BASE:             .word 0xc0                @ Sinal de escrita do buffer de instrução.
+    ALT_LWFPGASLVS_OFST:    .word 0xFF200000          @ Offset do barramento de FPGA    
+    HW_REGS_BASE:           .word 0xFC000000          @ Base dos registradores de hardware
+    HW_REGS_SPAN:           .word 0x04000000          @ Tamanho do espaço de registradores
+    HW_REGS_MASK:           .word 0x03FFFFFF          @ Máscara dos registradores
+    error_msg_open:         .asciz "[ERROR]: Você não pode abrir: \"/dev/mem\"...\n"
+    error_msg_mmap:         .asciz "[ERROR]: Falhou o mmap...\n"
+    error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
 
 
 
