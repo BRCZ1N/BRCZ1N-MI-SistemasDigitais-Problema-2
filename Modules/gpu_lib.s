@@ -12,11 +12,13 @@
 .equ DATA_B_BASE, 0x70                @ Barramento â€œBâ€ de dados do buffer de instruÃ§Ã£o.
 .equ SCREEN_BASE, 0xa0                @ Sinal que informa se o tempo de renderizaÃ§Ã£o de uma tela jÃ¡ foi finalizado.
 .equ WRFULL_BASE, 0xb0                @ Sinal que informa se o buffer de instruÃ§Ã£o estÃ¡ cheio ou nÃ£o.
-.equ WRREG_BASE,  0xc0                 @ Sinal de escrita do buffer de instruÃ§Ã£o.
+.equ WRREG_BASE,  0xc0                @ Sinal de escrita do buffer de instruÃ§Ã£o.
+            
 
 .type gpuMapping, %function
 gpuMapping:
 
+    PUSH {LR}
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
     MOV R1, #2                    @ O_RDWR
@@ -69,16 +71,19 @@ gpuMapping:
 closeGpuMapping:
 
     PUSH {LR}
+
     LDR R0, =virtual_base
     LDR R0, [R0]
-    LDR R1, =ALT_LWFPGASLVS_OFST
-    LDR R1, [R1]
+    MOV R1, #4096
     MOV R7, #91               @ syscall number for munmap (Linux ARM)
     SVC 0                     @ Faz a chamada de sistema (munmap)
 
     LDR R0, =fd
+    LDR R0, [R0]
     MOV R7, #6                @ syscall number for close (Linux ARM)
     SVC 0
+
+    MOV R0, #1 
     POP {LR}
     BX LR
 
@@ -251,9 +256,9 @@ setBackgroundBlock:
     PUSH {R0, R1, R2, R3, R4, LR}
 
     @ Calcular address = (line * 80) + column
-    MOV R4, R2              @ R4 = line
+    MOV R6, R2              @ R4 = line
     MOV R5, #80             @ Multiplicador 80
-    MUL R4, R4, R5          @ R4 = line * 80
+    MUL R4, R6, R5          @ R4 = line * 80
     ADD R4, R4, R1          @ R4 = (line * 80) + column
 
     @ Chama dataA(2, 0, address)
