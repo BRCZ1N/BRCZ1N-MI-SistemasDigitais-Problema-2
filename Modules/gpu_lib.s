@@ -43,26 +43,6 @@ gpuMapping:
     LDR R1, =virtual_base
     STR R0, [R1]
 
-    ADD R4, R1, #DATA_A_BASE             
-    LDR R0, =lw_ptr_dataA_addr
-    STR R4, [R0]                 
-
-    ADD R4, R1, #DATA_B_BASE
-    LDR R0, =lw_ptr_dataB_addr
-    STR R4, [R0]
-
-    ADD R4, R1, #WRREG_BASE
-    LDR R0, =lw_ptr_wrReg_addr
-    STR R4, [R0]
-
-    ADD R4, R1, #WRFULL_BASE
-    LDR R0, =lw_ptr_wrFull_addr
-    STR R4, [R0]
-
-    ADD R4, R1, #SCREEN_BASE
-    LDR R0, =lw_ptr_screen_addr
-    STR R4, [R0]
-
     MOV R0, #1                    
     POP {LR}
     BX LR
@@ -90,8 +70,8 @@ closeGpuMapping:
 .type isFull, %function
 isFull:
 
-    LDR R1, =lw_ptr_wrFull_addr
-    LDR R0, [R1]              @ Carrega o endereÃ§o de lw_ptr_wrFull_addr
+    LDR R1, =virtual_base
+    LDR R0, [R1,#WRFULL_BASE]              @ Carrega o endereÃ§o de lw_ptr_wrFull_addr
     BX LR
 
 .type sendInstruction, %function
@@ -103,20 +83,16 @@ sendInstruction:
     POP {R0, R1}
     CMP R5, #0
     BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da funcao
-    MOV R2, #0
-    LDR R3, =lw_ptr_wrReg_addr
+    LDR R3, =virtual_base
     LDR R3, [R3]
-    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 0
-    LDR R4, =lw_ptr_dataA_addr
-    LDR R4, [R4]
-    STR R0, [R4]              @ *(uint32_t *) lw_ptr_dataA_addr = dataA
-    LDR R5, =lw_ptr_dataB_addr
-    LDR R5, [R5]
-    STR R1, [R5]              @ *(uint32_t *) lw_ptr_dataB_addr = dataB
-    MOV R2, #1
-    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 1
     MOV R2, #0
-    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 0
+    STR R2, [R3,#WRREG_BASE]
+    STR R0, [R3,#DATA_A_BASE]
+    STR R1, [R3,#DATA_B_BASE]
+    MOV R2, #1
+    STR R2, [R3,#WRREG_BASE]
+    MOV R2, #0
+    STR R2, [R3,#WRREG_BASE]
 
 end_sendInstruction:
 
@@ -287,11 +263,6 @@ setBackgroundBlock:
 .data
     fd:                     .word 0                   @ Ponteiro para o descritor de arquivo
     virtual_base:           .word 0                   @ Ponteiro para o endereÃ§o mapeado na memÃ³ria
-    lw_ptr_dataA_addr:      .word 0                   @ Ponteiro para o registrador de dados A
-    lw_ptr_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
-    lw_ptr_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
-    lw_ptr_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
-    lw_ptr_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderizaÃ§Ã£o da tela jÃ¡ foi finalizada
     DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memÃ³ria
     ALT_LWFPGASLVS_OFST:    .word 0xff200             @ Offset do barramento de FPGA    
     
