@@ -8,10 +8,14 @@
 .global setBackgroundBlock
 .global isFull
 
+.equ DATA_A_BASE, 0x80                @ Barramento â€œAâ€ de dados do buffer de instruÃ§Ã£o.
+.equ DATA_B_BASE, 0x70                @ Barramento â€œBâ€ de dados do buffer de instruÃ§Ã£o.
+.equ SCREEN_BASE, 0xa0                @ Sinal que informa se o tempo de renderizaÃ§Ã£o de uma tela jÃ¡ foi finalizado.
+.equ WRFULL_BASE, 0xb0                @ Sinal que informa se o buffer de instruÃ§Ã£o estÃ¡ cheio ou nÃ£o.
+.equ WRREG_BASE,  0xc0                 @ Sinal de escrita do buffer de instruÃ§Ã£o.
+
 .type gpuMapping, %function
 gpuMapping:
-
-    PUSH {LR}
 
     @ Open "/dev/mem"
     LDR R0, =DEV_MEM_PATH         @ Carrega a string "/dev/mem"
@@ -19,110 +23,45 @@ gpuMapping:
     MOV R2, #0
     MOV R7, #5                    @ syscall number for open (Linux ARM)
     SVC 0                        @ Faz a chamada de sistema (open)
-    CMP R0, #-1
-    BEQ error_open_mem
     LDR R1, =fd
     STR R0, [R1]                  @ Salva o resultado da chamada em fd
 
-    @ Mmap HW_REGS_BASE
+    MOV R4, R0
+
+    @ Mmap LW
     MOV R0, #0                    @ addr: NULL
-    LDR R1, =HW_REGS_SPAN         @ length
-    LDR R1, [R1]                  
+    MOV R1, #4096                 @ length         
     MOV R2, #3                    @ prot: PROT_READ | PROT_WRITE
     MOV R3, #1                    @ flags: MAP_SHARED
-    LDR R4, =fd                   @ Carregar fd
-    LDR R4, [R4]                  @ Carregar o valor de fd
-    LDR R5, =HW_REGS_BASE         @ offset: HW_REGS_BASE
+                                  @ Carregar fd
+    LDR R5, =ALT_LWFPGASLVS_OFST  @ offset: ALT_LWFPGASLVS_OFST
     LDR R5, [R5]
     MOV R7, #192                  @ syscall number for mmap2 (Linux ARM)
-    SVC #0                        @ Faz a chamada de sistema (mmap)
-    CMP R0, #0                    @ Verifica se o retorno é MAP_FAILED
-    BEQ error_mmap                @ Se for MAP_FAILED, vai para erro
-
+    SVC 0                         @ Faz a chamada de sistema (mmap)
     LDR R1, =virtual_base
-    STR R0, [R1]                  @ Salva o ponteiro virtual_base
+    STR R0, [R1]
 
-    @ Calcula os endereços mapeados
-    LDR R2, =ALT_LWFPGASLVS_OFST
-    LDR R2, [R2]
-    LDR R3, =HW_REGS_MASK
-    LDR R3, [R3]
-    LDR R1, =virtual_base
-    LDR R1, [R1]
+    ADD R4, R1, #DATA_A_BASE             
+    LDR R0, =lw_ptr_dataA_addr
+    STR R4, [R0]                 
 
-    LDR R4, =DATA_A_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2                @ ALT_LWFPGASLVS_OFST + DATA_A_BASE
-    AND R4, R4, R3                @ Aplicar a máscara HW_REGS_MASK
-    ADD R4, R1, R4                @ virtual_base + offset calculado
-    LDR R0, =h2p_lw_dataA_addr
-    STR R4, [R0]                  @ Salva o endereço calculado em h2p_lw_dataA_addr
-
-    LDR R4, =DATA_B_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2
-    AND R4, R4, R3
-    ADD R4, R1, R4
-    LDR R0, =h2p_lw_dataB_addr
+    ADD R4, R1, #DATA_B_BASE
+    LDR R0, =lw_ptr_dataB_addr
     STR R4, [R0]
 
-    LDR R4, =WRREG_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2
-    AND R4, R4, R3
-    ADD R4, R1, R4
-    LDR R0, =h2p_lw_wrReg_addr
+    ADD R4, R1, #WRREG_BASE
+    LDR R0, =lw_ptr_wrReg_addr
     STR R4, [R0]
 
-    LDR R4, =WRFULL_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2
-    AND R4, R4, R3
-    ADD R4, R1, R4
-    LDR R0, =h2p_lw_wrFull_addr
+    ADD R4, R1, #WRFULL_BASE
+    LDR R0, =lw_ptr_wrFull_addr
     STR R4, [R0]
 
-    LDR R4, =SCREEN_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2
-    AND R4, R4, R3
-    ADD R4, R1, R4
-    LDR R0, =h2p_lw_screen_addr
+    ADD R4, R1, #SCREEN_BASE
+    LDR R0, =lw_ptr_screen_addr
     STR R4, [R0]
 
-    LDR R4, =RESET_PULSECOUNTER_BASE
-    LDR R4, [R4]
-    ADD R4, R4, R2
-    AND R4, R4, R3
-    ADD R4, R1, R4
-    LDR R0, =h2p_lw_result_pulseCounter_addr
-    STR R4, [R0]
-
-    MOV R0, #1                    @ Retorno de sucesso
-    POP {LR}
-    BX LR
-    
-error_open_mem:
-
-    LDR R0, =error_msg_open
-    LDR R0, [R0]
-    MOV R7, #4                    @ syscall number for write (Linux ARM)
-    SVC 0                        @ printf("[ERROR]: could not open \"/dev/mem\"...\n")
-    MOV R0, #-1
-    POP {LR}
-    BX LR
-
-error_mmap:
-
-    LDR R0, =error_msg_mmap
-    LDR R0, [R0]
-    MOV R7, #4                    @ syscall number for write (Linux ARM)
-    SVC 0                        @ printf("[ERROR]: mmap() failed...\n")
-    LDR R0, =fd
-    LDR R0, [R0]
-    MOV R7, #6                    @ syscall number for close (Linux ARM)
-    SVC 0
-    MOV R0, #-1
+    MOV R0, #1                    
     POP {LR}
     BX LR
 
@@ -131,36 +70,23 @@ closeGpuMapping:
 
     PUSH {LR}
     LDR R0, =virtual_base
-    LDR R1, =HW_REGS_SPAN
+    LDR R0, [R0]
+    LDR R1, =ALT_LWFPGASLVS_OFST
+    LDR R1, [R1]
     MOV R7, #91               @ syscall number for munmap (Linux ARM)
-    SVC 0                    @ Faz a chamada de sistema (munmap)
-    CMP R0, #0
-    BNE error_munmap
+    SVC 0                     @ Faz a chamada de sistema (munmap)
+
     LDR R0, =fd
     MOV R7, #6                @ syscall number for close (Linux ARM)
     SVC 0
     POP {LR}
     BX LR
 
-error_munmap:
-
-    LDR R0, =error_msg_munmap
-    LDR R0, [R0]
-    MOV R7, #4                @ syscall number for write (Linux ARM)
-    SVC #0                    @ printf("[ERROR]: munmap() failed...\n")
-    LDR R0, =fd
-    LDR R0, [R0]
-    MOV R7, #6                @ syscall number for close (Linux ARM)
-    SVC #0
-    POP {LR}
-    BX LR
-
 .type isFull, %function
 isFull:
 
-    LDR R1, =h2p_lw_wrFull_addr
-    LDR R0, [R1]              @ Carrega o endereço de h2p_lw_wrFull_addr
-    LDR R0, [R0]              @ *(uint32_t *) h2p_lw_wrFull_addr
+    LDR R1, =lw_ptr_wrFull_addr
+    LDR R0, [R1]              @ Carrega o endereÃ§o de lw_ptr_wrFull_addr
     BX LR
 
 .type sendInstruction, %function
@@ -171,21 +97,21 @@ sendInstruction:
     MOV R5, R0
     POP {R0, R1}
     CMP R5, #0
-    BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da função
+    BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da funcao
     MOV R2, #0
-    LDR R3, =h2p_lw_wrReg_addr
+    LDR R3, =lw_ptr_wrReg_addr
     LDR R3, [R3]
-    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
-    LDR R4, =h2p_lw_dataA_addr
+    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 0
+    LDR R4, =lw_ptr_dataA_addr
     LDR R4, [R4]
-    STR R0, [R4]              @ *(uint32_t *) h2p_lw_dataA_addr = dataA
-    LDR R5, =h2p_lw_dataB_addr
+    STR R0, [R4]              @ *(uint32_t *) lw_ptr_dataA_addr = dataA
+    LDR R5, =lw_ptr_dataB_addr
     LDR R5, [R5]
-    STR R1, [R5]              @ *(uint32_t *) h2p_lw_dataB_addr = dataB
+    STR R1, [R5]              @ *(uint32_t *) lw_ptr_dataB_addr = dataB
     MOV R2, #1
-    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 1
+    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 1
     MOV R2, #0
-    STR R2, [R3]              @ *(uint32_t *) h2p_lw_wrReg_addr = 0
+    STR R2, [R3]              @ *(uint32_t *) lw_ptr_wrReg_addr = 0
 
 end_sendInstruction:
 
@@ -195,7 +121,7 @@ end_sendInstruction:
 .type dataA, %function
 dataA:
 
-    PUSH {R4, R5, LR}
+    PUSH {LR}
     MOV R4, #0              @ Inicializa o valor de data = 0
     CMP R0, #0              @ Verifica se opcode == 0
     BEQ opcode_0            @ Se for igual, vai para opcode_0
@@ -222,7 +148,7 @@ opcode_mem:
 end_dataA:
 
     MOV R0, R4              @ Retorna data
-    POP {R4, R5, LR}
+    POP {LR}
     BX LR
 
 .type setPolygon, %function
@@ -355,28 +281,12 @@ setBackgroundBlock:
 
 .data
     fd:                     .word 0                   @ Ponteiro para o descritor de arquivo
-    virtual_base:           .word 0                   @ Ponteiro para o endereço mapeado na memória
-    h2p_lw_dataA_addr:      .word 0                   @ Ponteiro para o registrador de dados A
-    h2p_lw_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
-    h2p_lw_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
-    h2p_lw_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
-    h2p_lw_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderização da tela já foi finalizada
-    h2p_lw_result_pulseCounter_addr: .word 0          @ Ponteiro para o registrador do contador de tempo para renderização de tela
-    DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memória
-    DATA_A_BASE:            .word 0x80                @ Barramento “A” de dados do buffer de instrução.
-    DATA_B_BASE:            .word 0x70                @ Barramento “B” de dados do buffer de instrução.
-    RESET_PULSECOUNTER_BASE:.word 0x90                @ Sinal que “reseta” o contador externo responsável por contar o tempo de renderização de uma tela.
-    SCREEN_BASE:            .word 0xa0                @ Sinal que informa se o tempo de renderização de uma tela já foi finalizado.
-    WRFULL_BASE:            .word 0xb0                @ Sinal que informa se o buffer de instrução está cheio ou não.
-    WRREG_BASE:             .word 0xc0                @ Sinal de escrita do buffer de instrução.
-    ALT_LWFPGASLVS_OFST:    .word 0xFF200000          @ Offset do barramento de FPGA    
-    HW_REGS_BASE:           .word 0xFC000000          @ Base dos registradores de hardware
-    HW_REGS_SPAN:           .word 0x04000000          @ Tamanho do espaço de registradores
-    HW_REGS_MASK:           .word 0x03FFFFFF          @ Máscara dos registradores
-    error_msg_open:         .asciz "[ERROR]: Você não pode abrir: \"/dev/mem\"...\n"
-    error_msg_mmap:         .asciz "[ERROR]: Falhou o mmap...\n"
-    error_msg_munmap:       .asciz "[ERROR]: Falhou o desmapeamento...\n"
-
-
-
-
+    virtual_base:           .word 0                   @ Ponteiro para o endereÃ§o mapeado na memÃ³ria
+    lw_ptr_dataA_addr:      .word 0                   @ Ponteiro para o registrador de dados A
+    lw_ptr_dataB_addr:      .word 0                   @ Ponteiro para o registrador de dados B
+    lw_ptr_wrReg_addr:      .word 0                   @ Ponteiro para o registrador de escrita
+    lw_ptr_wrFull_addr:     .word 0                   @ Ponteiro para o registrador de status de FIFO cheia
+    lw_ptr_screen_addr:     .word 0                   @ Ponteiro para o registrador que informa se a renderizaÃ§Ã£o da tela jÃ¡ foi finalizada
+    DEV_MEM_PATH:           .asciz "/dev/mem"         @ Caminho para o dispositivo de memÃ³ria
+    ALT_LWFPGASLVS_OFST:    .word 0xff200             @ Offset do barramento de FPGA    
+    
