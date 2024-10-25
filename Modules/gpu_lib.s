@@ -71,6 +71,7 @@ closeGpuMapping:
 isFull:
 
     LDR R1, =virtual_base
+    LDR R1, [R1]
     LDR R0, [R1,#WRFULL_BASE]              @ Carrega o endereÃ§o de lw_ptr_wrFull_addr
     BX LR
 
