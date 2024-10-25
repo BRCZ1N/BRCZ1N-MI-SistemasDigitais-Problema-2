@@ -1,7 +1,6 @@
 .global gpuMapping
 .global closeGpuMapping
 .global sendInstruction
-.global dataA
 .global setPolygon
 .global setSprite
 .global setBackgroundColor
@@ -10,7 +9,6 @@
 
 .equ DATA_A_BASE, 0x80                @ Barramento â€œAâ€ de dados do buffer de instruÃ§Ã£o.
 .equ DATA_B_BASE, 0x70                @ Barramento â€œBâ€ de dados do buffer de instruÃ§Ã£o.
-.equ SCREEN_BASE, 0xa0                @ Sinal que informa se o tempo de renderizaÃ§Ã£o de uma tela jÃ¡ foi finalizado.
 .equ WRFULL_BASE, 0xb0                @ Sinal que informa se o buffer de instruÃ§Ã£o estÃ¡ cheio ou nÃ£o.
 .equ WRREG_BASE,  0xc0                @ Sinal de escrita do buffer de instruÃ§Ã£o.
             
