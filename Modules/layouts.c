@@ -67,7 +67,7 @@ void drawScore(int coordX, int coordY, int score)
  * "score:" e "hscore:", seguido pelos valores atuais de pontuação
  * e a maior pontuação (high score). As pontuações são desenhadas
  * na tela em posições específicas, e bordas são desenhadas usando
- * a função `video_box` para delimitar o campo de jogo.
+ * a função `videoBox` para delimitar o campo de jogo.
  *
  * @param score A pontuação atual do jogador, que será exibida na tela.
  * @param hscore A maior pontuação registrada, que será exibida ao lado
@@ -84,7 +84,7 @@ void gameField(int score, int hscore)
     generatePhrase(220, 2, text_highscore, 7, COLOR_WHITE);
     drawScore(310, 2, hscore);
 
-    video_box(105, 18, 110, 239, COLOR_BLUE);  // LADO ESQUERDO
-    video_box(106, 234, 212, 239, COLOR_BLUE); // CENTRO
-    video_box(210, 18, 215, 239, COLOR_BLUE);  // Lado direito
+    videoBox(105, 18, 110, 239, COLOR_BLUE);  // LADO ESQUERDO
+    videoBox(106, 234, 212, 239, COLOR_BLUE); // CENTRO
+    videoBox(210, 18, 215, 239, COLOR_BLUE);  // Lado direito
 }
