@@ -3,9 +3,6 @@ int16_t axis_x;
 pthread_mutex_t lock;
 
 
-
-
-
 /*
      * Função principal que inicializa o ambiente do jogo Tetris.
      * Cria duas threads: 
