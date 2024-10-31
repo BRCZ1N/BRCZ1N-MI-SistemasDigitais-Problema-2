@@ -5,6 +5,7 @@
 .global setSprite
 .global setBackgroundColor
 .global setBackgroundBlock
+.global isFull
 
 .equ DATA_A_BASE, 0x80                @ Barramento â€œAâ€ de dados do buffer de instruÃ§Ã£o.
 .equ DATA_B_BASE, 0x70                @ Barramento â€œBâ€ de dados do buffer de instruÃ§Ã£o.
@@ -64,39 +65,38 @@ closeGpuMapping:
     POP {LR}
     BX LR
 
+.type isFull, %function
+isFull:
+
+    LDR R1, =virtual_base
+    LDR R1, [R1]
+    LDR R0, [R1,#WRFULL_BASE]              @ Carrega o endereÃ§o de lw_ptr_wrFull_addr
+    BX LR
 
 .type sendInstruction, %function
 sendInstruction:
 
     PUSH {R0, R1, LR}
-
+    BL isFull
+    MOV R5, R0
+    POP {R0, R1}
+    CMP R5, #0
+    BNE end_sendInstruction   @ Se a FIFO estiver cheia, sai da funcao
     LDR R3, =virtual_base
     LDR R3, [R3]
-
-whileisFull:
-
-    LDR R2, [R3,#WRFULL_BASE]      
-    CMP R2, #0 
-    BNE whileisFull     
-
-endSendInstruction:
-    
-    MOV R4, #0
-    STR R4, [R3,#WRREG_BASE]
-
+    MOV R2, #0
+    STR R2, [R3,#WRREG_BASE]
     STR R0, [R3,#DATA_A_BASE]
     STR R1, [R3,#DATA_B_BASE]
+    MOV R2, #1
+    STR R2, [R3,#WRREG_BASE]
+    MOV R2, #0
+    STR R2, [R3,#WRREG_BASE]
 
-    MOV R4, #1
-    STR R4, [R3,#WRREG_BASE]
-
-    MOV R4, #0
-    STR R4, [R3,#WRREG_BASE]
+end_sendInstruction:
 
     POP {LR}
     BX LR
-
-    
 
 .type dataA, %function
 dataA:
@@ -131,112 +131,40 @@ end_dataA:
     POP {LR}
     BX LR
 
-.type setSprite, %function
-setSprite:
-
-    POP {R4}
-    PUSH {R0, R1, R2, R3, R4, LR}
-    
-    @ Chama dataA(0, registrador, 0)
-    MOV R1, R0
-    MOV R0, #0              @ opcode = 0
-    MOV R2, #0              @ memory_address = 0
-    BL dataA                @ Chama dataA
-    MOV R6, R0              @ Armazena o resultado em dataA (R4)
-    POP {R0, R1, R2, R3, R4}
-    
-    @ Construir dataB
-    MOV R5, #0              @ Inicializa dataB = 0
-    ORR R5, R5, R4          @ dataB = dataB | activation_bit
-    LSL R5, R5, #10         @ dataB = dataB << 10
-    ORR R5, R5, R1          @ dataB = dataB | x
-    LSL R5, R5, #10         @ dataB = dataB << 10
-    ORR R5, R5, R2          @ dataB = dataB | y
-    LSL R5, R5, #9          @ dataB = dataB << 9
-    ORR R5, R5, R3          @ dataB = dataB | offset
-    
-    @ Chama sendInstruction(dataA, dataB)
-    MOV R0, R6              @ dataA -> R0
-    MOV R1, R5              @ dataB -> R1
-    BL sendInstruction
-
-    POP {LR}
-    BX LR
-
-.type setBackgroundColor, %function
-setBackgroundColor:
-
-    PUSH {R0, R1, R2, LR}
-
-    @ Chama dataA(0, 0, 0)
-    MOV R0, #0              @ opcode = 0
-    MOV R1, #0              @ reg = 0
-    MOV R2, #0              @ memory_address = 0
-    BL dataA                @ Chama dataA
-    MOV R3, R0              @ Armazena o resultado de dataA (R4)
-
-    POP {R0, R1, R2}
-
-    @ Construir color
-    MOV R4, R2              @ color = B
-    LSL R4, R4, #3          @ color = color << 3
-    ORR R4, R4, R1          @ color = color | G
-    LSL R4, R4, #3          @ color = color << 3
-    ORR R4, R4, R0          @ color = color | R
-
-    @ Chama sendInstruction(dataA, color)
-    MOV R0, R3              @ dataA -> R0
-    MOV R1, R4              @ color -> R1
-    BL sendInstruction
-
-    POP {LR}
-    BX LR
-
 .type setBackgroundBlock, %function
 setBackgroundBlock:
 
     POP {R4}
     PUSH {R0, R1, R2, R3, R4, LR}
 
-    @WBR 0b00 Setar o background color e o sprite 
-    @WSM 0b01 Sprites(Set)
-    @WBM 0b10 Background block
-    @DP  0b11 Poligono
-
-    @ R0 = column, R1 = line, R2 = Red, R3 = Green, R4 = Blue
-
-    @ calculo data A 
-
-    @Entrada R0 e R1 - Calcular address = (line * 80) + column
+    @ Calcular address = (line * 80) + column
+    MOV R6, R2              @ R4 = line
     MOV R5, #80             @ Multiplicador 80
-    MUL R6, R1, R5          @ R6 = line * 80
-    ADD R0, R0, R6          @ address = (line * 80) + column
+    MUL R4, R6, R5          @ R4 = line * 80
+    ADD R4, R4, R1          @ R4 = (line * 80) + column
 
-    @ Saida R4 = address
+    @ Chama dataA(2, 0, address)
+    MOV R0, #2              @ opcode = 2
+    MOV R1, #0              @ reg = 0
+    MOV R2, R4              @ memory_address = address
+    BL dataA                @ Chama dataA
+    MOV R5, R0              @ Armazena o resultado de dataA (R5)
+    POP {R0, R1, R2, R3, R4}
 
-    LSL R0, R0, #4          @ data = data << 4
-    MOV R5, #2              @ Seta opcode = 2
-    ORR R0, R0, R5          @ data = data | opcode
-
-    @ calculo data A 
-
-    @ calculo data B
-
+    @ Construir color
     MOV R6, R4              @ color = B
     LSL R6, R6, #3          @ color = color << 3
     ORR R6, R6, R3          @ color = color | G
     LSL R6, R6, #3          @ color = color << 3
     ORR R6, R6, R2          @ color = color | R
+
+    @ Chama sendInstruction(dataA, color)
+    MOV R0, R5              @ dataA -> R0
     MOV R1, R6              @ color -> R1
-
-    @ calculo data B
-
     BL sendInstruction
 
     POP {LR}
     BX LR
-
-    
 
 .data
     fd:                     .word 0                   @ Ponteiro para o descritor de arquivo

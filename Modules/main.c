@@ -2,6 +2,10 @@
 int16_t axis_x;
 pthread_mutex_t lock;
 
+
+
+
+
 /*
      * Função principal que inicializa o ambiente do jogo Tetris.
      * Cria duas threads: 
@@ -58,10 +62,9 @@ void execTetris()
 
     while (1)
     {
-        video_open();
-        video_clear();
-        video_erase();
-        video_close();
+        createMappingMemory();
+        clear_background_blocks();
+        closeMappingMemory();
 
         score = 0;
         resetBoard(boardMatrix);
@@ -102,36 +105,32 @@ void execTetris()
                     initTetromino(&currentTetromino);
                 }
                 drawTetrominoTerminal(currentTetromino);
-                video_open();
-                video_clear();
-                gameField(score, hscore);
+                createMappingMemory();
+                clear_background_blocks();
                 drawBoard(boardMatrix);
-                video_show();
-                video_close();
+
+                closeMappingMemory();
                 usleep(150000);
             }
             else
             {
-                video_open();
-                video_clear();
-                gameField(score, hscore);
+                createMappingMemory();
+            
+                clear_background_blocks();
                 drawBoard(boardMatrix);
-                generatePhrase(120, 2, text_paused, 6, COLOR_RED);
-                video_show();
-                video_close();
+        
+                closeMappingMemory();
             }
             drawBoardTerminal(boardMatrix);
         }
-        video_open();
-        video_clear();
-        gameField(score, hscore);
+        createMappingMemory();
+
+   
         drawBoard(boardMatrix);
-        generatePhrase(2, 100, text_game, 4, COLOR_RED);
-        generatePhrase(260, 100, text_over, 4, COLOR_RED);
-        video_show();
+        
         usleep(8000000);
-        video_clear();
-        video_close();
+        clear_background_blocks();
+        closeMappingMemory();
         if(score > hscore){
 
             hscore = score;

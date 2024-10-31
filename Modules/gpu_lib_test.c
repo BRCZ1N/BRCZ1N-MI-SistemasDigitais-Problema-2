@@ -26,15 +26,7 @@ volatile uint32_t *DATA_A_PTR;
 volatile uint32_t *DATA_B_PTR;
 void *LW_virtual;
 
-/**
- * Inicializa a comunicação com a GPU.
- *
- * Esta função realiza a abertura do arquivo especial `/dev/mem` e mapeia 
- * uma região da memória física para o espaço de usuário, permitindo a 
- * comunicação com o hardware da GPU.
- *
- * @return Retorna 0 se bem-sucedido, ou um valor negativo em caso de erro.
- */
+
 int gpu_init(void) {
     int fd;
 
@@ -61,12 +53,7 @@ int gpu_init(void) {
     return 0;
 }
 
-/**
- * Encerra a comunicação com a GPU.
- *
- * Esta função desfaz o mapeamento da memória física, liberando os recursos
- * utilizados.
- */
+
 void gpu_exit(void) {
     
     if (munmap(LW_virtual, LW_BRIDGE_SPAN) == -1) {
@@ -74,16 +61,7 @@ void gpu_exit(void) {
     }
 }
 
-/**
- * Envia uma instrução para a GPU.
- * 
- * Esta função envia uma instrução para a GPU, utilizando os endereçamentos
- * mapeados na memória. O envio é realizado através do registro START, com
- * os dados sendo enviados pelos registradores DATA_A e DATA_B.
- *
- * @param opcode_enderecamentos Opcode e endereçamento da instrução.
- * @param dados Dados da instrução.
- */
+
 void send_instruction(volatile uint32_t opcode_enderecamentos, volatile uint32_t dados) {
     /* Envia a instrução para a GPU via memória mapeada */
     *START_PTR = 0;  /* Desabilita o sinal de start */
@@ -93,34 +71,13 @@ void send_instruction(volatile uint32_t opcode_enderecamentos, volatile uint32_t
     *START_PTR = 0;  /* Desabilita o sinal de start */
 }
 
-/**
- * Monta e envia uma instrução WBR (alteração de cor do fundo).
- *
- * Esta função configura a cor do fundo enviando os valores RGB da cor para a GPU
- * via a instrução WBR (Write Background Register).
- *
- * @param r Componente vermelho da cor.
- * @param g Componente verde da cor.
- * @param b Componente azul da cor.
- */
+
 void instrucao_wbr(int r, int g, int b) {
     volatile uint32_t opcode = WBR;
     volatile uint32_t dados = (b << 6) | (g << 3) | r;
     send_instruction(opcode, dados);
 }
 
-/**
- * Envia instrução WBR para sprite.
- *
- * Esta função configura um sprite, enviando o registro e offset, assim como as
- * coordenadas x e y do sprite, para a GPU.
- *
- * @param reg Registro a ser utilizado.
- * @param offset Offset da posição do sprite.
- * @param x Posição horizontal do sprite.
- * @param y Posição vertical do sprite.
- * @param sp Sinalizador para habilitar o sprite.
- */
 void instrucao_wbr_sprite(int reg, int offset, int x, int y, int sp) {
     volatile uint32_t opcode = WBR;
     volatile uint32_t opcode_reg = (reg << 4) | opcode;
@@ -131,17 +88,7 @@ void instrucao_wbr_sprite(int reg, int offset, int x, int y, int sp) {
     send_instruction(opcode_reg, dados);
 }
 
-/**
- * Envia instrução WBM (alteração de cor de blocos de fundo).
- *
- * Esta função altera a cor de blocos de fundo, enviando os valores RGB e o endereço
- * para a GPU via a instrução WBM.
- *
- * @param address Endereço de memória do bloco.
- * @param r Componente vermelho da cor.
- * @param g Componente verde da cor.
- * @param b Componente azul da cor.
- */
+
 void instrucao_wbm(int address, int r, int g, int b) {
     volatile uint32_t opcode = WBM;
     volatile uint32_t dados = (b << 6) | (g << 3) | r;
@@ -149,17 +96,6 @@ void instrucao_wbm(int address, int r, int g, int b) {
     send_instruction(opcode_reg, dados);
 }
 
-/**
- * Envia instrução WSM (alteração de cor de pixels de sprite).
- *
- * Esta função altera a cor de pixels de sprites enviando os valores RGB e o endereço
- * para a GPU via a instrução WSM.
- *
- * @param address Endereço de memória do sprite.
- * @param r Componente vermelho da cor.
- * @param g Componente verde da cor.
- * @param b Componente azul da cor.
- */
 void instrucao_wsm(int address, int r, int g, int b) {
     volatile uint32_t opcode = WSM;
     volatile uint32_t dados = (b << 6) | (g << 3) | r;
@@ -167,21 +103,6 @@ void instrucao_wsm(int address, int r, int g, int b) {
     send_instruction(opcode_reg, dados);
 }
 
-/**
- * Envia instrução DP (desenhar polígono).
- *
- * Esta função desenha um polígono na tela utilizando as coordenadas de referência,
- * tamanho, cor e formato do polígono, enviando-os para a GPU via a instrução DP.
- *
- * @param address Endereço de memória do polígono.
- * @param ref_x Coordenada X de referência.
- * @param ref_y Coordenada Y de referência.
- * @param size Tamanho do polígono.
- * @param r Componente vermelho da cor.
- * @param g Componente verde da cor.
- * @param b Componente azul da cor.
- * @param shape Formato do polígono (1 = preenchido, 0 = contorno).
- */
 void instrucao_dp(int address, int ref_x, int ref_y, int size, int r, int g, int b, int shape) {
     volatile uint32_t opcode = DP;
     volatile uint32_t opcode_reg = (address << 4) | opcode;

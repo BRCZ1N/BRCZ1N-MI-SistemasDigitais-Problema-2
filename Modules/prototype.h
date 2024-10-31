@@ -45,6 +45,16 @@ void initTetromino(Tetromino *tetromino);
 void clearTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino); 
 int buttonRead(); 
 void changePauseState(int *pointerStateGame, int *pointerButtons); 
+void clear_background_blocks();
+extern int createMappingMemory();
+
+extern int closeMappingMemory();
+
+extern void setSprite(int registrador, int x, int y, int offset, int activation_bit);
+
+extern void set_background_color(int R, int G, int B);
+
+extern void set_background_block(int column, int line, int R, int G, int B);
 
 // Variáveis globais para o acelerômetro
 extern int16_t axis_x; // Eixo X do acelerômetro.

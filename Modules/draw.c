@@ -420,27 +420,38 @@ void generateChar(int coordX, int coordY, char caracter, short color)
  *                    elemento contém informações sobre o bloco, incluindo 
  *                    sua cor e se está vazio ou não.
  */
-void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS])
-{
 
+
+
+    void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS])
+{
     for (int i = 0; i < LINES; i++)
     {
-
         for (int j = 0; j < COLUMNS; j++)
         {
-
             if (boardMatrix[i][j].isNotEmpty)
             {
+                // Extrair as componentes RGB da cor armazenada no bloco
+                      // Componente azul
 
-                int initialX1 = INITIAL_LIMIT_X + j * (BLOCK_SIZE + SPACING);
-                int initialY1 = INITIAL_LIMIT_Y + i * (BLOCK_SIZE + SPACING);
-                int finalX2 = initialX1 + BLOCK_SIZE;
-                int finalY2 = initialY1 + BLOCK_SIZE;
-                video_box(initialX1, initialY1, finalX2, finalY2, boardMatrix[i][j].color);
+                // Define o bloco na coluna j e linha i com a cor RGB extraída
+                set_background_block(j, i, 7, 7, 0);
             }
         }
     }
 }
+
+void clear_background_blocks() {
+    int i = 0;
+    int j = 0;
+    for (i; i <60; i++){
+        for (j; j < 80; j++){
+            set_background_block(j, i, 6, 7, 7);
+        }
+        j = 0;
+    }
+}
+
 
 /**
  * Desenha o tabuleiro no terminal para depuração.
