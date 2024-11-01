@@ -429,7 +429,7 @@ void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS])
         {
             if (boardMatrix[i][j].isNotEmpty)
             {
-               
+
                 int initialX1 = INITIAL_LIMIT_X + j * (BLOCK_SIZE + SPACING);
                 int initialY1 = INITIAL_LIMIT_Y + i * (BLOCK_SIZE + SPACING);
                 int finalX2 = initialX1 + BLOCK_SIZE;
@@ -452,11 +452,22 @@ void generateBox(int column, int line, int R, int G, int B, int length)
     }
 }
 
-void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color)
+Color convertHexToRgb(int colorHex)
 {
-    int red = (color >> 16) & 0xFF;
-    int green = (color >> 8) & 0xFF;
-    int blue = color & 0xFF;
+    Color colorRgb;
+
+    colorRgb.red = (colorHex >> 16) & 0xE0;
+    colorRgb.green= (colorHex >> 8) & 0xE0;
+    colorRgb.blue = colorHex & 0xE0;
+    
+    return colorRgb;
+
+}
+
+void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength)
+{
+
+    Color colorRGB = convertHexToRgb(color);
     for (int i = initial_x; i < end_x; i++)
     {
         for (int j = initial_y; j < end_y; j++)
@@ -465,7 +476,7 @@ void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color)
             {
                 if (((isFull() / sizeof(int))) == 0)
                 {
-                    generateBox(j, i, red, green, blue, 4);
+                    generateBox(j, i, colorRGB.red, colorRGB.green, colorRGB.blue, blockLength);
                     break;
                 }
             }

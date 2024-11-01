@@ -44,4 +44,13 @@ typedef struct
 
 } PartTetromino;
 
+typedef struct
+{
+
+    int red;
+    int green;
+    int blue;
+
+} Color;
+
 #endif
