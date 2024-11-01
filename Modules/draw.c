@@ -464,6 +464,25 @@ Color convertHexToRgb(int colorHex)
 
 }
 
+void videoClear(){
+
+    for (int i = 0; i < SCREEN_X; i++)
+    {
+        for (int j = 0; j < SCREEN_Y; j++)
+        {
+            while (1)
+            {
+                if (((isFull() / sizeof(int))) == 0)
+                {
+                    generateBox(j, i, 0, 0, 0, 4);
+                    break;
+                }
+            }
+        }
+    }
+
+}
+
 void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength)
 {
 
