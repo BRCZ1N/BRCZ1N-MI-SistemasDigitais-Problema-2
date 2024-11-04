@@ -17,7 +17,6 @@ pthread_mutex_t lock;
 int main()
 {
 
-    printf("Deu exec");
     pthread_t thread1, thread2;
 
     pthread_mutex_init(&lock, NULL);
@@ -60,13 +59,14 @@ void execTetris()
     char text_over[4] = "over";
     char text_paused[6] = "paused";
     char text_game[4] = "game";
+    gpuMapping();
 
     while (1)
     {
-        gpuMapping();
-        setBackgroundBlock(1,2,3,1,1);
-        closeGpuMapping();
-
+        
+        
+        //videoBox(0,0,100,100,COLOR_RED,1);
+        
         score = 0;
         resetBoard(boardMatrix);
         initTetromino(&currentTetromino);
@@ -74,7 +74,7 @@ void execTetris()
 
         while (!checkGameOver(boardMatrix, &currentTetromino))
         {
-            buttonValue = buttonRead();
+            //buttonValue = buttonRead();
 
             changePauseState(&pointerStateGame, &buttonValue);
 
@@ -106,36 +106,38 @@ void execTetris()
                     initTetromino(&currentTetromino);
                 }
                 drawTetrominoTerminal(currentTetromino);
-                gpuMapping();
+                //gpuMapping();
                 //();
+                videoClear();
+              
                 drawBoard(boardMatrix);
 
-                closeGpuMapping();
-                usleep(150000);
+                //closeGpuMapping();
+                
             }
             else
             {
-                gpuMapping();
+                //gpuMapping();
             
                 //();
                 drawBoard(boardMatrix);
         
-                closeGpuMapping();
+                //closeGpuMapping();
             }
             drawBoardTerminal(boardMatrix);
         }
-        gpuMapping();
+        //gpuMapping();
 
    
-        drawBoard(boardMatrix);
-        
-        usleep(8000000);
+        //drawBoard(boardMatrix);
         //();
-        closeGpuMapping();
+        //closeGpuMapping();
         if(score > hscore){
 
             hscore = score;
 
         }
     }
+    closeGpuMapping();
+
 }

@@ -50,6 +50,10 @@ extern void setBackgroundColor(int R, int G, int B);
 extern void setBackgroundBlock(int column, int line, int R, int G, int B);
 extern void setPolygon(int address, int opcode, int color, int form, int mult, int ref_point_x, int ref_point_y);
 extern int isFull();
+void generateBox(int column, int line, int R, int G, int B, int length);
+Color convertHexToRgb(int colorHex);
+void videoClear();
+void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength);
 
 // Variáveis globais para o acelerômetro
 extern int16_t axis_x; // Eixo X do acelerômetro.

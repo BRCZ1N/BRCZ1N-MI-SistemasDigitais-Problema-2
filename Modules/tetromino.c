@@ -101,7 +101,7 @@ void generateLPattern(Tetromino *tetromino)
     memcpy(tetromino->pattern[2], l180, sizeof(l180));
     memcpy(tetromino->pattern[3], l270, sizeof(l270));
 
-    tetromino->color = COLOR_ORANGE;
+    tetromino->color = COLOR_RED;
     tetromino->currentRotation = 0;
 }
 

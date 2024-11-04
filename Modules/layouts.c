@@ -84,7 +84,7 @@ void gameField(int score, int hscore)
     generatePhrase(220, 2, text_highscore, 7, COLOR_WHITE);
     drawScore(310, 2, hscore);
 
-    videoBox(105, 18, 110, 239, COLOR_BLUE);  // LADO ESQUERDO
-    videoBox(106, 234, 212, 239, COLOR_BLUE); // CENTRO
-    videoBox(210, 18, 215, 239, COLOR_BLUE);  // Lado direito
+    videoBox(105, 18, 110, 239, COLOR_BLUE, 4);  // LADO ESQUERDO
+    videoBox(106, 234, 212, 239, COLOR_BLUE, 4); // CENTRO
+    videoBox(210, 18, 215, 239, COLOR_BLUE, 4);  // Lado direito
 }
