@@ -77,7 +77,7 @@ void gameField(int score, int hscore)
 {
 
     char text_score[6] = "score:";
-    printChar(2, 2, "A", COLOR_WHITE);
+    generateChar(2, 2, "A", COLOR_WHITE);
 
     drawScore(78, 2, score);
 
@@ -393,7 +393,7 @@ unsigned short char_bitmaps[37][CHAR_SIZE][CHAR_SIZE] = {
 };
 
 // Função para imprimir um caractere
-void printChar(int coordX, int coordY, char caracter, short color) {
+void generateChar(int coordX, int coordY, char caracter, short color) {
     int index = charToIndex(caracter);
     Color cor = convertHexToRgb(color);
     printf("\n"+ index);
