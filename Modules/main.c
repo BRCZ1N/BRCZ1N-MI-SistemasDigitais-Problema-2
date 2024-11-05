@@ -54,7 +54,8 @@ void execTetris()
     srand(time(NULL));
     
     Tetromino currentTetromino;
-    PartTetromino boardMatrix[LINES][COLUMNS];
+    PartTetromino boardMatrix[LINES][COLUMNS], OldboardMatrix[LINES][COLUMNS];
+
     int dx = 0, dy = 1, moved = 1, score, hscore;
     char text_over[4] = "over";
     char text_paused[6] = "paused";
@@ -63,7 +64,6 @@ void execTetris()
 
     while (1)
     {
-        
         
         //videoBox(0,0,100,100,COLOR_RED,1);
         
@@ -75,7 +75,9 @@ void execTetris()
         while (!checkGameOver(boardMatrix, &currentTetromino))
         {
             //buttonValue = buttonRead();
-
+            videoClear();
+            usleep(200000);
+            gameField(score, hscore);
             changePauseState(&pointerStateGame, &buttonValue);
 
             if (pointerStateGame == 1)
@@ -108,7 +110,7 @@ void execTetris()
                 drawTetrominoTerminal(currentTetromino);
                 //gpuMapping();
                 //();
-                videoClear();
+                
               
                 drawBoard(boardMatrix);
 

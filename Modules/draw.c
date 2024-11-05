@@ -459,13 +459,8 @@ Color convertHexToRgb(int colorHex)
     colorRgb.red = (((colorHex >> 16) & 0xFF)*7)/255;
     colorRgb.green= (((colorHex >> 8) & 0xFF)*7)/255;
     colorRgb.blue = ((colorHex & 0xFF)*7)/255;
-
-    printf("/nR:%d", colorRgb.red);
-    printf("G:%d", colorRgb.green);
-    printf("/nB:%d", colorRgb.blue);
     
     return colorRgb;
-
 }
 
 void videoClear(){
