@@ -42,6 +42,7 @@ void generateTetromino(Tetromino *tetromino);
 void initTetromino(Tetromino *tetromino); 
 void clearTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino); 
 int buttonRead(); 
+void clearBoard(PartTetromino boardMatrix[LINES][COLUMNS]);
 void changePauseState(int *pointerStateGame, int *pointerButtons); 
 extern int closeGpuMapping();
 extern int gpuMapping();

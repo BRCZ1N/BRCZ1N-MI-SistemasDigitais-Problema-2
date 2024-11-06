@@ -4,7 +4,7 @@
  * Gera uma frase na tela com caracteres individuais.
  * 
  * Esta função itera sobre uma lista de caracteres e chama a função
- * `generateChar` para desenhar cada caractere em uma posição especificada.
+ * `printChar` para desenhar cada caractere em uma posição especificada.
  * Os caracteres são espaçados uniformemente, e os espaços são ignorados
  * durante o processo de geração.
  *
@@ -26,17 +26,17 @@ void generatePhrase(int coordX, int coordY, char *list, int lenList, short color
         {
 
             X = coordX + i * 13;
-            generateChar(X, coordY, list[i], color);
+            printChar(X, coordY, list[i], color);
         }
     }
 }
 
 /**
- * Desenha a pontuação na tela utilizando a função `generateChar`.
+ * Desenha a pontuação na tela utilizando a função `printChar`.
  * 
  * Esta função converte um número inteiro representando a pontuação
  * em uma string e desenha cada dígito na tela usando a função
- * `generateChar`. Os caracteres são espaçados uniformemente, cada um
+ * `printChar`. Os caracteres são espaçados uniformemente, cada um
  * ocupando uma posição específica baseada em coordenadas.
  *
  * @param coordX A coordenada X inicial onde a pontuação será desenhada.
@@ -56,7 +56,7 @@ void drawScore(int coordX, int coordY, int score)
 
     for (int i = 0; i < len; i++)
     {
-        generateChar(coordX + (13 * i), coordY, number_str[i], COLOR_YELLOW);
+        printChar(coordX + (13 * i), coordY, number_str[i], COLOR_YELLOW);
     }
 }
 
@@ -75,11 +75,45 @@ void drawScore(int coordX, int coordY, int score)
  */
 void gameField(int score, int hscore)
 {
+    //char score_c = (char) score;
+    score = 789;    // Exemplo de valor
+    hscore = 0;   // Exemplo de valor
 
-    char text_score[6] = "score:";
-    printChar(2, 2, "A", COLOR_WHITE);
+    char text_score[3];
+    char text_hscore[3];
 
-    drawScore(78, 2, score);
+    // Converte 'score' e 'hscore' para strings com dois dígitos, colocando em 'text_score' e 'text_hscore'.
+    sprintf(text_score, "%03d", score);
+    sprintf(text_hscore, "%03d", hscore);
+
+
+    printChar(15, 0, 'S', COLOR_WHITE);
+    printChar(15, 5, 'C', COLOR_WHITE);
+    printChar(15, 10, 'O', COLOR_WHITE);
+    printChar(15, 15, 'R', COLOR_WHITE);
+    printChar(15, 20, 'E', COLOR_WHITE);
+
+
+    printChar(22, 5, text_score[0], COLOR_WHITE);
+    printChar(22, 10, text_score[1], COLOR_WHITE);
+    printChar(22, 15, text_score[2], COLOR_WHITE);
+
+    printChar(30, 2, 'H', COLOR_WHITE);
+    printChar(30, 7, 'I', COLOR_WHITE);
+    printChar(30, 12, 'G', COLOR_WHITE);
+    printChar(30, 17, 'H', COLOR_WHITE);
+    printChar(37, 5, text_hscore[0], COLOR_WHITE);
+    printChar(37, 10, text_hscore[1], COLOR_WHITE);
+    printChar(37, 15, text_hscore[2], COLOR_WHITE);
+
+
+    // printChar(22, 60, 'S', COLOR_WHITE);
+    // printChar(22, 65, 'C', COLOR_WHITE);
+    // printChar(22, 70, 'O', COLOR_WHITE);
+    // printChar(22, 75, 'R', COLOR_WHITE);
+    // printChar(22, 80, 'E', COLOR_WHITE);
+
+    //drawScore(78, 2, score);
 
     // char text_highscore[7] = "hscore:";
     // generatePhrase(220, 2, text_highscore, 7, COLOR_WHITE);

@@ -71,12 +71,12 @@ void execTetris()
         resetBoard(boardMatrix);
         initTetromino(&currentTetromino);
         int pointerStateGame = 1;
+        videoClear();
 
         while (!checkGameOver(boardMatrix, &currentTetromino))
         {
             //buttonValue = buttonRead();
-            videoClear();
-            usleep(200000);
+            clearBoard(boardMatrix);
             gameField(score, hscore);
             changePauseState(&pointerStateGame, &buttonValue);
 
@@ -113,6 +113,7 @@ void execTetris()
                 
               
                 drawBoard(boardMatrix);
+                usleep(450000);
 
                 //closeGpuMapping();
                 
