@@ -25,7 +25,7 @@ int button_open() {
     }
 
     // Mapeia o endereço base
-    virtual_base = mmap(NULL, HW_REGS_SPAN, PROT_READ | PROT_WRITE, MAP_SHARED, fd, HW_REGS_BASE + ALT_LWFPGASLVS_OFST);
+    virtual_base = mmap(NULL, HW_REGS_SPAN, PROT_READ | PROT_WRITE, MAP_SHARED, fd, HW_REGS_BASE);
     if (virtual_base == MAP_FAILED) {
         printf("Erro no mmap\n");
         close(fd);
@@ -93,41 +93,17 @@ void changePauseState(int *pointerStateGame, int *pointerButtons)
     switch (*pointerStateGame)
     {
     case 1:
-        if (*pointerButtons == 2)
+        if (*pointerButtons == 14)
         {
             *pointerStateGame = 2;
         }
         break;
 
     case 2:
-        if (*pointerButtons == 2)
+        if (*pointerButtons == 13)
         {
             *pointerStateGame = 1;
         }
         break;
     }
 }
-
-/**
- * Lê o valor do botão pressionado.
- *
- * Esta função abre a interface de leitura dos botões, lê o valor atual do 
- * botão pressionado, e então fecha a interface. O valor lido é retornado 
- * pela função. Este processo permite a interação do usuário com o sistema 
- * através de botões, sendo útil para controlar ações no programa.
- *
- * @return int Valor lido dos botões, representando o botão que foi pressionado. 
- *              Um valor específico indica um botão específico.
- */
-
-// int buttonRead()
-// {
-
-//     int readValue;
-
-//     KEY_open();
-//     KEY_read(&readValue);
-//     KEY_close();
-
-//     return readValue;
-// }

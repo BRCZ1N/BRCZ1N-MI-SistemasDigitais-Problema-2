@@ -105,3 +105,30 @@ void gameField(int score, int hscore)
     videoBox(110, 234, 230, 239, COLOR_BLUE, 1); // CENTRO
     videoBox(225, 18, 230, 239, COLOR_BLUE, 1);  // Lado direito
 }
+
+void gameOver()
+{
+
+    printChar(15, 0, 'G', COLOR_YELLOW);
+    printChar(15, 5, 'A', COLOR_YELLOW);
+    printChar(15, 10, 'M', COLOR_YELLOW);
+    printChar(15, 15, 'E', COLOR_YELLOW);
+
+    printChar(30, 2, 'O', COLOR_YELLOW);
+    printChar(30, 7, 'V', COLOR_YELLOW);
+    printChar(30, 12, 'E', COLOR_YELLOW);
+    printChar(30, 17, 'R', COLOR_YELLOW);
+
+}
+void gamePause()
+{
+
+    printChar(15, 55, 'P', COLOR_YELLOW);
+    printChar(15, 60, 'A', COLOR_YELLOW);
+    printChar(15, 65, 'U', COLOR_YELLOW);
+    printChar(15, 70, 'S', COLOR_YELLOW);
+    printChar(15, 75, 'E', COLOR_YELLOW);
+
+
+}
+

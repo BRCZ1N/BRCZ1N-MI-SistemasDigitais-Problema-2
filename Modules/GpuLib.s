@@ -217,4 +217,21 @@ setPolygon:
     POP {LR}
     BX LR
 
+	.align 2
+    .global	buttonRead
+    .type	buttonRead, %function
+
+buttonRead:
+
+	PUSH	{LR}		
+
+	LDR R0, =virtual_base				
+	LDR	R0, [R0] 
+	LDR	R0, [R0, #0x0]    
+           	
+    POP {LR}
+    BX LR
+
+	
+
 
