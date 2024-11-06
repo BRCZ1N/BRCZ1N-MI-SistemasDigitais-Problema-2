@@ -12,9 +12,6 @@
 #define INITIAL_LIMIT_Y 18
 #define SPACING 2
 #define SHADOW_OFFSET 2
-#define CHAR_SIZE_LINE 5
-#define CHAR_SIZE_COLUMN 3
-#define QTD_CHAR 37
 
 #define COLOR_WHITE 0xFFFFFF
 #define COLOR_RED 0xFF0000
