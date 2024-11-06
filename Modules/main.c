@@ -61,10 +61,11 @@ void execTetris()
     char text_paused[6] = "paused";
     char text_game[4] = "game";
     gpuMapping();
+        
 
     while (1)
     {
-        
+     
         //videoBox(0,0,100,100,COLOR_RED,1);
         
         score = 0;
@@ -75,10 +76,14 @@ void execTetris()
 
         while (!checkGameOver(boardMatrix, &currentTetromino))
         {
-            //buttonValue = buttonRead();
+
+            buttonValue = buttonRead();
+            
             clearBoard(boardMatrix);
             gameField(score, hscore);
             changePauseState(&pointerStateGame, &buttonValue);
+            buttonValue = 15;
+         
 
             if (pointerStateGame == 1)
             {
@@ -105,11 +110,10 @@ void execTetris()
                 if (!moved)
                 {
                     removeFullLines(boardMatrix, &score);
-                    initTetromino(&currentTetromino);
+                    initTetromino(&currentTetromino); 
                 }
-                drawTetrominoTerminal(currentTetromino);
+                //drawTetrominoTerminal(currentTetromino);
                 //gpuMapping();
-                //();
                 
               
                 drawBoard(boardMatrix);
@@ -123,18 +127,23 @@ void execTetris()
                 //gpuMapping();
             
                 //();
+                gamePause();
                 drawBoard(boardMatrix);
+                usleep(450000);
         
                 //closeGpuMapping();
             }
-            drawBoardTerminal(boardMatrix);
+
+            //drawBoardTerminal(boardMatrix);
         }
         //gpuMapping();
 
    
         //drawBoard(boardMatrix);
-        //();
-        //closeGpuMapping();
+        videoClear();
+        gameOver();
+
+        usleep(650000);
         if(score > hscore){
 
             hscore = score;

@@ -102,8 +102,8 @@ unsigned short char_bitmaps[37][5][4] = {
     // M
     {
         {1,0,0,1},
-        {1,1,0,1},
-        {1,0,1,1},
+        {1,1,1,1},
+        {1,1,1,1},
         {1,0,0,1},
         {1,0,0,1}
     },
@@ -297,10 +297,6 @@ unsigned short char_bitmaps[37][5][4] = {
 // Função para imprimir um caractere
 void printChar(int coordX, int coordY, char caracter, short color) {
     int index = charToIndex(caracter);
-    printf("\n");
-    printf("%d",index);
-    printf("%c",caracter);
-    printf("\n");
     Color cor = convertHexToRgb(color);
     for (int i = 0; i < CHAR_SIZE; i++) {
         for (int j = 0; j < 4; j++) {

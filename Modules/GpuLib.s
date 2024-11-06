@@ -24,8 +24,8 @@ gpuMapping:
 
 	PUSH	{R4-R7, LR}
 	LDR R0,  =DEV_MEM_PATH						
-	MOVW R1, #4098
-	MOVT R1, #16							
+	MOVW R1, #2
+	MOVT R1, #0							
 	MOV R7, #5								
 	SVC #0
 
@@ -187,52 +187,11 @@ setSprite:
     BX LR
 
 	.align 2
-    .global	clearSprite
-    .type	clearSprite, %function
-clearSprite:
-
-	PUSH {R4, LR}		
-	
-	MOV R4, #1
-
-	CMP R0, #-1					
-	BEQ clearAllSprite		
-								
-	MOV R1, #0				
-	MOV R2, #0					
-	MOV R3, #0					
-	PUSH	{R2}
-	BL setSprite
-	POP 	{R2}
-
-	B exitSprite
-
-clearAllSprite:	
-			
-	MOV R0, R4
-
-	MOV R1, #0					
-	MOV R2, #0					
-	MOV R3, #0					
-	PUSH	{R2}				
-	BL setSprite
-	POP 	{R2}
-
-	ADD R4, #1
-
-	CMP R0, #32					
-	bne clearAllSprite		
-
-exitSprite:
-
-    POP     {R4, LR}
-    BX LR
-
-	.align 2
     .global	setPolygon
     .type	setPolygon, %function
 
 setPolygon:
+
 	PUSH	{LR}		
    
     LSL R0, R0, #4      
@@ -259,44 +218,20 @@ setPolygon:
     BX LR
 
 	.align 2
-    .global	clearPolygon
-    .type	clearPolygon, %function
-clearPolygon:
+    .global	buttonRead
+    .type	buttonRead, %function
 
-	PUSH	{R4, LR}		
+buttonRead:
 
-	MOV R4, #0
+	PUSH	{LR}		
 
-	CMP R0, #-1					
-	BEQ clearAllPolygon		
-								
-	MOV R1, #0					
-	MOV R2, #0					
-	MOV R3, #0					
-	PUSH	{R2, R3}			
-	BL setPolygon
-	POP 	{R2, R3}
-
-	B exitPolygon
-
-clearAllPolygon:				
-	
-	MOV R0, R4
-
-	MOV R1, #0	
-	MOV R2, #0					
-	MOV R3, #0					
-	PUSH	{R2, R3}			
-	BL setPolygon
-	POP 	{R2, R3}
-
-	ADD R4, #1
-
-	CMP R0, #15				
-	bne clearAllPolygon	
-
-exitPolygon:
-
-    POP     {R4, LR}
+	LDR R0, =virtual_base				
+	LDR	R0, [R0] 
+	LDR	R0, [R0, #0x0]    
+           	
+    POP {LR}
     BX LR
+
+	
+
 
