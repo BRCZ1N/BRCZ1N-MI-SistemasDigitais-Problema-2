@@ -42,6 +42,7 @@ void generateTetromino(Tetromino *tetromino);
 void initTetromino(Tetromino *tetromino); 
 void clearTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino); 
 int buttonRead(); 
+void clearBoard(PartTetromino boardMatrix[LINES][COLUMNS]);
 void changePauseState(int *pointerStateGame, int *pointerButtons); 
 extern int closeGpuMapping();
 extern int gpuMapping();
@@ -54,6 +55,9 @@ void generateBox(int column, int line, int R, int G, int B, int length);
 Color convertHexToRgb(int colorHex);
 void videoClear();
 void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength);
+
+int charToIndex(char c);
+void printChar(int coordX, int coordY, char caracter, short color);
 
 // Variáveis globais para o acelerômetro
 extern int16_t axis_x; // Eixo X do acelerômetro.
