@@ -75,17 +75,12 @@ void drawScore(int coordX, int coordY, int score)
  */
 void gameField(int score, int hscore)
 {
-    //char score_c = (char) score;
-    score = 789;    // Exemplo de valor
-    hscore = 0;   // Exemplo de valor
 
     char text_score[3];
     char text_hscore[3];
 
-    // Converte 'score' e 'hscore' para strings com dois dígitos, colocando em 'text_score' e 'text_hscore'.
     sprintf(text_score, "%03d", score);
     sprintf(text_hscore, "%03d", hscore);
-
 
     printChar(15, 0, 'S', COLOR_WHITE);
     printChar(15, 5, 'C', COLOR_WHITE);
@@ -93,32 +88,19 @@ void gameField(int score, int hscore)
     printChar(15, 15, 'R', COLOR_WHITE);
     printChar(15, 20, 'E', COLOR_WHITE);
 
-
-    printChar(22, 5, text_score[0], COLOR_WHITE);
-    printChar(22, 10, text_score[1], COLOR_WHITE);
-    printChar(22, 15, text_score[2], COLOR_WHITE);
+    printChar(22, 5, text_score[0], COLOR_YELLOW);
+    printChar(22, 10, text_score[1], COLOR_YELLOW);
+    printChar(22, 15, text_score[2], COLOR_YELLOW);
 
     printChar(30, 2, 'H', COLOR_WHITE);
     printChar(30, 7, 'I', COLOR_WHITE);
     printChar(30, 12, 'G', COLOR_WHITE);
     printChar(30, 17, 'H', COLOR_WHITE);
-    printChar(37, 5, text_hscore[0], COLOR_WHITE);
-    printChar(37, 10, text_hscore[1], COLOR_WHITE);
-    printChar(37, 15, text_hscore[2], COLOR_WHITE);
+    
+    printChar(37, 5, text_hscore[0], COLOR_YELLOW);
+    printChar(37, 10, text_hscore[1], COLOR_YELLOW);
+    printChar(37, 15, text_hscore[2], COLOR_YELLOW);
 
-
-    // printChar(22, 60, 'S', COLOR_WHITE);
-    // printChar(22, 65, 'C', COLOR_WHITE);
-    // printChar(22, 70, 'O', COLOR_WHITE);
-    // printChar(22, 75, 'R', COLOR_WHITE);
-    // printChar(22, 80, 'E', COLOR_WHITE);
-
-    //drawScore(78, 2, score);
-
-    // char text_highscore[7] = "hscore:";
-    // generatePhrase(220, 2, text_highscore, 7, COLOR_WHITE);
-    // drawScore(310, 2, hscore);
-    //x,y 
     videoBox(110, 18, 112, 239, COLOR_BLUE, 1);  // LADO ESQUERDO
     videoBox(110, 234, 230, 239, COLOR_BLUE, 1); // CENTRO
     videoBox(225, 18, 230, 239, COLOR_BLUE, 1);  // Lado direito
