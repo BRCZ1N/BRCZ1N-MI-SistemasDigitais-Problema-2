@@ -46,7 +46,50 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
   </ul>
 </div>
 
-<div align="justify" id="Bibliotecas"> 
+# Projeto de Controle de GPU
+
+Este repositório contém o desenvolvimento de um código para o controle de uma GPU em uma placa FPGA. O funcionamento da GPU é baseado na arquitetura descrita no trabalho "Desenvolvimento de uma Arquitetura Baseada em Sprites para Criação de Jogos 2D em Ambientes Reconfiguráveis Utilizando Dispositivos FPGA", de Gabriel. Abaixo, são detalhadas as principais características e instruções que a GPU suporta.
+
+## Metodologia
+
+### Funcionamento da GPU
+
+Para controlar a GPU, foi necessário entender a arquitetura e os modos de comunicação desta unidade gráfica. A GPU utiliza instruções de 64 bits e se comunica através dos barramentos de dados `DATA A` e `DATA B`. Abaixo, é detalhado o funcionamento da GPU:
+
+- **Instruções de 64 Bits**: A GPU opera com instruções de 64 bits, onde o campo `opcode` (4 bits) no início da palavra identifica o tipo de operação. Dependendo da instrução, a palavra é dividida entre `DATA A` e `DATA B`. Quando o sinal `START` recebe um nível lógico alto, os valores de `DATA A` e `DATA B` são inseridos nas filas FIFO de instrução, e a GPU processa os dados conforme a operação indicada.
+
+- **Controle de FIFO**: Um barramento de saída indica o estado das filas FIFO (se estão cheias), permitindo evitar a perda de instruções por excesso de inserção.
+
+- **Memórias de Sprites e Background**: 
+  - **Memória de Sprites**: Capaz de armazenar até 31 sprites simultâneas, cada sprite possui dados de cada pixel individualmente.
+  - **Memória de Background**: Armazena 4800 blocos de 8x8 pixels, formando uma grade de 80x60 que compõe o fundo da tela.
+  - **Registradores**: A GPU possui 32 registradores que guardam o endereço de cada sprite ativa. O registrador 1 é reservado para a cor de background.
+
+- **Saída em VGA**: A GPU gera uma saída no formato VGA (640x480 pixels), que é enviada diretamente à porta VGA da placa, sem necessidade de tratamento adicional.
+
+- **Gerenciamento de Polígonos**: A GPU é capaz de desenhar polígonos como quadrados ou triângulos de tamanhos predefinidos, selecionados via instrução.
+
+### Instruções da GPU
+
+A GPU utiliza quatro instruções principais, conforme descrito abaixo:
+
+1. **WBR (0000 - Escrita no Banco de Registradores)**: Modifica o endereço de memória referenciado pelo registrador alvo, associando-o a uma sprite específica.
+
+2. **WSM (0001 - Escrita na Memória de Sprites)**: Altera o valor de um endereço na memória de sprites, modificando o valor de um pixel da sprite.
+
+3. **WBM (0010 - Escrita na Memória de Background)**: Modifica a cor de um bloco específico no background.
+
+4. **DP (0011 - Definição de Polígono)**: Define um polígono com tamanho, cor e posição específicas, associando-o a um registrador selecionado.
+
+### Diagrama das Instruções
+
+- **WBR**: Referencia uma sprite no banco de registradores.
+- **WSM**: Modifica um pixel em uma sprite.
+- **WBM**: Modifica a cor de um bloco do background.
+- **DP**: Define um polígono (quadrado ou triângulo) com características específicas.
+
+
+
 
 # Resumo da Biblioteca para Gerenciamento de GPU em Assembly
 Esta biblioteca em assembly ARMv7 foi projetada para controle direto de uma GPU implementada em FPGA, permitindo mapeamento de memória, configuração de fundo e sprites, e manipulação de polígonos. Abaixo está uma visão geral das principais funções e os endereços de memória usados para interagir com o hardware gráfico. Para realizar a comunicação com a GPU, este projeto utiliza a linguagem Assembly. O mapeamento de memória é realizado por meio de chamadas de sistema (syscalls). São utilizadas quatro syscalls específicas: `open`, passando a constante 5, para abrir o diretório `/dev/mem`; `close`, com a constante 6, para fechar o diretório; `mmap2`, com a chamada 192, uma vez que o ARMv7 não possui `mmap`; e, finalmente, `munmap` para desmapear a memória.
