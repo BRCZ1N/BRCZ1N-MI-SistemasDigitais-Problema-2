@@ -52,7 +52,7 @@ void execTetris()
     Tetromino currentTetromino;
     PartTetromino boardMatrix[LINES][COLUMNS], oldBoardMatrix[LINES][COLUMNS];
 
-    int dx = 0, dy = 1, moved = 1, score, hscore;
+    int dx = 0, dy = 1, moved = 1, score, hscore = 0;
     char text_over[4] = "over";
     char text_paused[6] = "paused";
     char text_game[4] = "game";
@@ -81,7 +81,12 @@ void execTetris()
 
             if (pointerStateGame == 1)
             {
-
+                printChar(10, 59, 'P', COLOR_BLACK);
+                printChar(20, 59, 'A', COLOR_BLACK);
+                printChar(30, 59, 'U', COLOR_BLACK);
+                printChar(40, 59, 'S', COLOR_BLACK);
+                printChar(50, 59, 'E', COLOR_BLACK);
+    
                 pthread_mutex_lock(&lock);
                 if (axis_x * mg_per_lsb >= 100)
                 {

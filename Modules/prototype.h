@@ -55,6 +55,7 @@ extern int isFull();
 void generateBox(int column, int line, int R, int G, int B, int length);
 Color convertHexToRgb(int colorHex);
 void videoClear();
+void videoClearPosition(int x_initial, int y_initial, int x_final, int y_final);
 void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength);
 int charToIndex(char c);
 void printChar(int coordX, int coordY, char caracter, short color);

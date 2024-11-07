@@ -5,7 +5,7 @@
 unsigned short char_bitmaps[37][5][4] = {
     // A
     {
-        {0, 1, 1, 1},
+        {1, 1, 1, 1},
         {1, 0, 0, 1},
         {1, 1, 1, 1},
         {1, 0, 0, 1},
@@ -310,15 +310,16 @@ void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS], PartTetromino oldBoard
     {
         for (int j = 0; j < COLUMNS; j++)
         {
-            if (boardMatrix[i][j].isNotEmpty != oldBoardMatrix[i][j].isNotEmpty || boardMatrix[i][j].color != oldBoardMatrix[i][j].color) {
+            if (boardMatrix[i][j].isNotEmpty != oldBoardMatrix[i][j].isNotEmpty || boardMatrix[i][j].color != oldBoardMatrix[i][j].color)
             {
+                {
 
-                int initialX1 = INITIAL_LIMIT_X + j * (BLOCK_SIZE);
-                int initialY1 = INITIAL_LIMIT_Y + i * (BLOCK_SIZE);
-                int finalX2 = initialX1 + BLOCK_SIZE;
-                int finalY2 = initialY1 + BLOCK_SIZE;
-                videoBox(initialX1, initialY1, finalX2, finalY2, boardMatrix[i][j].color, 1);
-
+                    int initialX1 = INITIAL_LIMIT_X + j * (BLOCK_SIZE);
+                    int initialY1 = INITIAL_LIMIT_Y + i * (BLOCK_SIZE);
+                    int finalX2 = initialX1 + BLOCK_SIZE;
+                    int finalY2 = initialY1 + BLOCK_SIZE;
+                    videoBox(initialX1, initialY1, finalX2, finalY2, boardMatrix[i][j].color, 1);
+                }
             }
         }
     }
@@ -385,26 +386,25 @@ void videoClear()
     }
 }
 
-//Video clear personalizado com posicao escolhida para testar amanhã pra limpar posição necessarias 
-// void videoClear(int x_initial, int y_initial, int x_final, int y_final)
-// {
+// Video clear personalizado com posicao escolhida para testar amanhã pra limpar posição necessarias
+ void videoClearPosition(int x_initial, int y_initial, int x_final, int y_final)
+ {
 
-//     for (int i = x_initial; i < x_final; i++)
-//     {
-//         for (int j = y_initial; j < y_final; j++)
-//         {
-//             while (1)
-//             {
-//                 if ((isFull() / sizeof(int)) == 0)
-//                 {
-//                     generateBox(j, i, 0, 0, 0, 1);
-//                     break;
-//                 }
-//             }
-//         }
-//     }
-// }
-
+    for (int i = x_initial; i < x_final; i++)
+    {
+        for (int j = y_initial; j < y_final; j++)
+        {
+            while (1)
+            {
+                if ((isFull() / sizeof(int)) == 0)
+                {
+                    generateBox(j, i, 0, 0, 0, 1);
+                    break;
+                }
+            }
+        }
+    }
+}
 
 void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength)
 {
