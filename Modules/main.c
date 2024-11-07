@@ -2,18 +2,14 @@
 int16_t axis_x;
 pthread_mutex_t lock;
 
-
-
-
-
 /*
-     * Função principal que inicializa o ambiente do jogo Tetris.
-     * Cria duas threads: 
-     * - A primeira thread executa a função execAccel, que lida com a função principal de execução do acelerômetro.
-     * - A segunda thread executa a função execTetris, que contém a lógica principal do jogo Tetris.
-     * Um mutex é inicializado para garantir que o acesso a recursos compartilhados, como a variável axis_x, seja feito de maneira segura.
-     * As threads são unidas ao final da execução, garantindo que o programa aguarde a conclusão de ambas antes de encerrar.
-     */
+ * Função principal que inicializa o ambiente do jogo Tetris.
+ * Cria duas threads:
+ * - A primeira thread executa a função execAccel, que lida com a função principal de execução do acelerômetro.
+ * - A segunda thread executa a função execTetris, que contém a lógica principal do jogo Tetris.
+ * Um mutex é inicializado para garantir que o acesso a recursos compartilhados, como a variável axis_x, seja feito de maneira segura.
+ * As threads são unidas ao final da execução, garantindo que o programa aguarde a conclusão de ambas antes de encerrar.
+ */
 int main()
 {
 
@@ -52,7 +48,7 @@ void execTetris()
     int16_t mg_per_lsb = 4;
 
     srand(time(NULL));
-    
+
     Tetromino currentTetromino;
     PartTetromino boardMatrix[LINES][COLUMNS], OldboardMatrix[LINES][COLUMNS];
 
@@ -61,13 +57,12 @@ void execTetris()
     char text_paused[6] = "paused";
     char text_game[4] = "game";
     gpuMapping();
-        
 
     while (1)
     {
-     
-        //videoBox(0,0,100,100,COLOR_RED,1);
-        
+
+        // videoBox(0,0,100,100,COLOR_RED,1);
+
         score = 0;
         resetBoard(boardMatrix);
         initTetromino(&currentTetromino);
@@ -78,12 +73,11 @@ void execTetris()
         {
 
             buttonValue = buttonRead();
-            
+
             clearBoard(boardMatrix);
             gameField(score, hscore);
             changePauseState(&pointerStateGame, &buttonValue);
             buttonValue = 15;
-         
 
             if (pointerStateGame == 1)
             {
@@ -110,46 +104,33 @@ void execTetris()
                 if (!moved)
                 {
                     removeFullLines(boardMatrix, &score);
-                    initTetromino(&currentTetromino); 
+                    initTetromino(&currentTetromino);
                 }
-                //drawTetrominoTerminal(currentTetromino);
-                //gpuMapping();
-                
-              
+                drawTetrominoTerminal(currentTetromino);
                 drawBoard(boardMatrix);
                 usleep(450000);
-
-                //closeGpuMapping();
-                
             }
             else
             {
-                //gpuMapping();
-            
-                //();
+
                 gamePause();
                 drawBoard(boardMatrix);
                 usleep(450000);
-        
-                //closeGpuMapping();
             }
 
-            //drawBoardTerminal(boardMatrix);
+            drawBoardTerminal(boardMatrix);
         }
-        //gpuMapping();
 
-   
-        //drawBoard(boardMatrix);
+        drawBoard(boardMatrix);
         videoClear();
         gameOver();
 
         usleep(650000);
-        if(score > hscore){
+        if (score > hscore)
+        {
 
             hscore = score;
-
         }
     }
     closeGpuMapping();
-
 }

@@ -18,8 +18,8 @@ static int pasta_i2c = -1, pasta_gerenciador = -1;
  *
  * Esta função mapeia o espaço de memória para o gerenciador de sistema e o controlador I2C,
  * configura o multiplexador (MUX) para o uso do I2C, e inicializa o controlador I2C0. Em seguida,
- * verifica o ID do dispositivo acelerômetro e, se correto, realiza a calibração e monitora 
- * continuamente os dados do eixo X, atualizando-os conforme necessário. Se o ID do dispositivo 
+ * verifica o ID do dispositivo acelerômetro e, se correto, realiza a calibração e monitora
+ * continuamente os dados do eixo X, atualizando-os conforme necessário. Se o ID do dispositivo
  * estiver incorreto, a função imprime uma mensagem de erro.
  *
  * @param args Ponteiro para argumentos adicionais, embora não utilizado diretamente na implementação.
@@ -99,8 +99,8 @@ void execAccel(void *args)
 /**
  * Configura o multiplexador de pinos (pin mux) para conectar o acelerômetro ao barramento I2C0.
  *
- * Esta função ajusta o gerenciador de sistema (sysmgr) para desabilitar o uso da interface FPGA 
- * para o I2C0 e configura os pinos de entrada/saída (GENERALIO7 e GENERALIO8) para funcionar como 
+ * Esta função ajusta o gerenciador de sistema (sysmgr) para desabilitar o uso da interface FPGA
+ * para o I2C0 e configura os pinos de entrada/saída (GENERALIO7 e GENERALIO8) para funcionar como
  * as linhas de dados (SDA) e clock (SCL) do barramento I2C0, respectivamente.
  */
 void Configurar_mux()
@@ -116,10 +116,10 @@ void Configurar_mux()
 /**
  * Inicializa o controlador I2C0 para comunicação com o acelerômetro.
  *
- * Esta função configura o controlador I2C0 para atuar como mestre, com endereçamento de 7 bits 
- * e em modo rápido (400 kb/s). Ela aborta qualquer transmissão em andamento, configura o 
- * clock SCL de acordo com os requisitos de temporização e habilita o controlador para uso com 
- * o endereço do dispositivo alvo (0x53). A função também verifica o status de habilitação e espera 
+ * Esta função configura o controlador I2C0 para atuar como mestre, com endereçamento de 7 bits
+ * e em modo rápido (400 kb/s). Ela aborta qualquer transmissão em andamento, configura o
+ * clock SCL de acordo com os requisitos de temporização e habilita o controlador para uso com
+ * o endereço do dispositivo alvo (0x53). A função também verifica o status de habilitação e espera
  * até que o controlador esteja pronto.
  */
 
@@ -161,8 +161,8 @@ void Inicializar_I2C0()
 /**
  * Lê o valor de um registrador do acelerômetro via protocolo I2C.
  *
- * Esta função envia o endereço do registrador a ser lido e emite um sinal de leitura 
- * através do controlador I2C0. Em seguida, espera até que o buffer de recepção (RX) 
+ * Esta função envia o endereço do registrador a ser lido e emite um sinal de leitura
+ * através do controlador I2C0. Em seguida, espera até que o buffer de recepção (RX)
  * contenha dados e armazena o valor lido no ponteiro fornecido.
  *
  * @param endereco Endereço do registrador a ser lido.
@@ -189,10 +189,10 @@ void ler_REG(uint8_t endereco, uint8_t *valor)
 /**
  * Configura e inicia o acelerômetro.
  *
- * Esta função configura-o para operar com uma faixa de medição de ±16g 
- * e resolução total, define a taxa de dados de saída para 200Hz e habilita 
- * interrupções para detectar atividade e inatividade. Ela também configura 
- * os limiares e o tempo de inatividade. Por fim, a função para e inicia o 
+ * Esta função configura-o para operar com uma faixa de medição de ±16g
+ * e resolução total, define a taxa de dados de saída para 200Hz e habilita
+ * interrupções para detectar atividade e inatividade. Ela também configura
+ * os limiares e o tempo de inatividade. Por fim, a função para e inicia o
  * modo de medição do acelerômetro.
  */
 void iniciar_acelerometro()
@@ -221,12 +221,12 @@ void iniciar_acelerometro()
 /**
  * Realiza a calibração do acelerômetro.
  *
- * A função calibra o acelerômetro ao colocar o dispositivo em modo de espera, 
- * ler os offsets atuais e configurar o dispositivo para uma taxa de 100Hz e 
- * faixa de ±16g para realizar a medição. Ela coleta 32 amostras do eixo X, 
- * calcula a média das leituras e ajusta o valor de compensação do eixo X 
- * (offset) para garantir leituras precisas. Depois da calibração, a função 
- * restaura as configurações de taxa de dados e formato de dados originais e 
+ * A função calibra o acelerômetro ao colocar o dispositivo em modo de espera,
+ * ler os offsets atuais e configurar o dispositivo para uma taxa de 100Hz e
+ * faixa de ±16g para realizar a medição. Ela coleta 32 amostras do eixo X,
+ * calcula a média das leituras e ajusta o valor de compensação do eixo X
+ * (offset) para garantir leituras precisas. Depois da calibração, a função
+ * restaura as configurações de taxa de dados e formato de dados originais e
  * reinicia o modo de medição.
  */
 void calibrar()
@@ -291,10 +291,10 @@ void calibrar()
 /**
  * Verifica se os dados do acelerômetro estão prontos para leitura.
  *
- * Esta função lê o registrador de fonte de interrupção (INT_SOURCE) do 
- * acelerômetro e verifica se a bandeira de dados prontos (DATAREADY) está 
- * definida. Se a bandeira estiver ativada, a função retorna verdadeiro, 
- * indicando que os dados estão disponíveis para leitura; caso contrário, 
+ * Esta função lê o registrador de fonte de interrupção (INT_SOURCE) do
+ * acelerômetro e verifica se a bandeira de dados prontos (DATAREADY) está
+ * definida. Se a bandeira estiver ativada, a função retorna verdadeiro,
+ * indicando que os dados estão disponíveis para leitura; caso contrário,
  * retorna falso.
  *
  * @return true Se os dados estão prontos para leitura; false caso contrário.
@@ -315,9 +315,9 @@ bool dados_prontos()
 /**
  * Verifica se há atualizações nos dados do acelerômetro.
  *
- * Esta função lê o registrador de fonte de interrupção (INT_SOURCE) do 
- * acelerômetro e verifica se a bandeira de atividade (ACTIVITY) está 
- * definida. Se a bandeira estiver ativada, a função retorna verdadeiro, 
+ * Esta função lê o registrador de fonte de interrupção (INT_SOURCE) do
+ * acelerômetro e verifica se a bandeira de atividade (ACTIVITY) está
+ * definida. Se a bandeira estiver ativada, a função retorna verdadeiro,
  * indicando que os dados foram atualizados; caso contrário, retorna falso.
  *
  * @return true Se os dados foram atualizados; false caso contrário.
@@ -338,9 +338,9 @@ bool dados_atualizados()
 /**
  * Lê os dados de aceleração do eixo X do acelerômetro.
  *
- * Esta função lê dois bytes do registrador de dados do eixo X e combina 
- * esses bytes para formar um valor de 16 bits representando a aceleração 
- * no eixo X. A leitura é feita a partir do registrador de dados, e caso 
+ * Esta função lê dois bytes do registrador de dados do eixo X e combina
+ * esses bytes para formar um valor de 16 bits representando a aceleração
+ * no eixo X. A leitura é feita a partir do registrador de dados, e caso
  * ocorra um erro, o endereço do registrador pode ser substituído por 0x32.
  *
  * @return int16_t Valor da aceleração no eixo X.
@@ -359,8 +359,8 @@ int16_t ler_x()
 /**
  * Escreve um valor em um registrador interno do acelerômetro.
  *
- * Esta função envia o endereço do registrador especificado e o valor 
- * a ser escrito. O endereço é ajustado para incluir um sinal de início 
+ * Esta função envia o endereço do registrador especificado e o valor
+ * a ser escrito. O endereço é ajustado para incluir um sinal de início
  * (START) ao enviar a informação.
  *
  * @param endereco Endereço do registrador a ser escrito.
@@ -379,9 +379,9 @@ void escreve_REG(uint8_t endereco, uint8_t valor)
 /**
  * Lê múltiplos registradores internos consecutivos do acelerômetro.
  *
- * Esta função envia o endereço de um registrador e realiza leituras 
- * consecutivas, armazenando os valores em um array fornecido. O endereço 
- * é ajustado para incluir um sinal de início (START) e a função realiza 
+ * Esta função envia o endereço de um registrador e realiza leituras
+ * consecutivas, armazenando os valores em um array fornecido. O endereço
+ * é ajustado para incluir um sinal de início (START) e a função realiza
  * a leitura "n" vezes, onde "n" é o tamanho especificado.
  *
  * @param endereco Endereço do registrador inicial para a leitura.
@@ -415,8 +415,8 @@ void multileitura_REG(uint8_t endereco, uint8_t valores[], uint8_t tamanho)
 /**
  * Abre o dispositivo de memória física /dev/mem para acesso a endereços físicos.
  *
- * Esta função tenta abrir o arquivo /dev/mem, se ainda não estiver aberto. 
- * Se a abertura falhar, uma mensagem de erro é impressa. O identificador do 
+ * Esta função tenta abrir o arquivo /dev/mem, se ainda não estiver aberto.
+ * Se a abertura falhar, uma mensagem de erro é impressa. O identificador do
  * arquivo é retornado para uso em operações subsequentes.
  *
  * @param pasta_de_arquivo Identificador do arquivo para operações futuras.
@@ -436,7 +436,7 @@ int Abrir_memoria_fisica(int pasta_de_arquivo)
 /**
  * Fecha o dispositivo de memória física aberto para liberar acesso a endereços físicos.
  *
- * Esta função recebe o identificador do arquivo e o fecha, liberando 
+ * Esta função recebe o identificador do arquivo e o fecha, liberando
  * recursos associados.
  *
  * @param pasta_de_arquivo Identificador do arquivo a ser fechado.
@@ -450,9 +450,9 @@ void Fechar_memoria_fisica(int pasta_de_arquivo)
 /**
  * Mapeia endereços físicos para endereços virtuais.
  *
- * Esta função estabelece um mapeamento entre um endereço físico inicial 
- * e um tamanho especificado, retornando um ponteiro para a base do espaço 
- * mapeado. Se o mapeamento falhar, uma mensagem de erro é impressa, e 
+ * Esta função estabelece um mapeamento entre um endereço físico inicial
+ * e um tamanho especificado, retornando um ponteiro para a base do espaço
+ * mapeado. Se o mapeamento falhar, uma mensagem de erro é impressa, e
  * NULL é retornado.
  *
  * @param pasta_de_arquivo Identificador do arquivo aberto para mapeamento.
@@ -480,9 +480,9 @@ void *Mapear_memoria_fisica(int pasta_de_arquivo, unsigned int base, unsigned in
 /**
  * Fecha o mapeamento de endereço virtual previamente estabelecido.
  *
- * Esta função utiliza `munmap` para desfazer o mapeamento de um endereço virtual 
+ * Esta função utiliza `munmap` para desfazer o mapeamento de um endereço virtual
  * associado a um endereço físico. Se o `munmap` falhar, uma mensagem de erro é exibida.
- * 
+ *
  * @param virtual_base Ponteiro para o endereço virtual previamente mapeado.
  * @param tamanho Tamanho do mapeamento a ser desfeito, em bytes.
  * @return int Retorna 0 em caso de sucesso, ou -1 se o mapeamento falhar.
