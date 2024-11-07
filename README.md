@@ -113,36 +113,6 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 Para usar os botões, usamos mapeamento de memoria com linguagem C, 
 </div>
 
-<div div align="justify" id="Funcionamento"> 
-<h2> Funcionamento do jogo</h2>
-<div display= "flex" justify-content= "center" align="center"> 
-  
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="Imagens/1.gif" alt="Tela do jogo." />
-    <p>Tela do jogo.</p>
-</div>
-
- <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="Imagens/5.gif" alt="Como controlar o jogo." />
-    <p>Como controlar o jogo.</p>
-</div>
-
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="Imagens/6.gif" alt="Demonstração da jogabilidade do jogo." />
-    <p>Demonstração da jogabilidade do jogo.</p>
-</div>
-
-<div display= "flex" justify-content= "center" align="center">
-        <img src="Imagens/9.png" alt="Localização do botão na placa." />
-        <p>Localização do botão na placa.</p>
-</div>
-
-</div>
-
-Para controlar as peças, o jogador deve inclinar a placa no eixo horizontal, o que permite mover as peças para a esquerda ou para a direita. Além disso, o jogo possui uma função de pausa: para pausar, o jogador deve pressionar o botão 1 na placa.
-Se as peças alcançarem o topo da tela, o jogo termina e reinicia. Caso a pontuação do jogador seja superior à maior pontuação registrada, ela será definida como o novo high score.
-</div>
-
 
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
@@ -170,7 +140,7 @@ Abra o terminal e execute o seguinte comando para obter o código do repositóri
 
 **Passo 2: Acessar o Diretório e Compilar o Código em C**
 
-    cd MI-SistemasDigitais-Problema-1\Modulos
+    cd MI-SistemasDigitais-Problema-1\Modules
 
 Compile e execute o código usando o comando:
 
