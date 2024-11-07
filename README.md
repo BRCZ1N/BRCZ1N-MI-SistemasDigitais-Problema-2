@@ -28,7 +28,6 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 </ul>
 </div>
 
-
 <h1 align="center"> Sumário </h1>
 <div id="sumario">
     <ul>
@@ -41,93 +40,11 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
         <li><a href="#Algoritmos">Algoritmos de Jogo</a></li>
         <li><a href="#Funcionamento">Funcionamento do jogo</a></li>
         <li><a href="#execucao"> Como Usar </a></li>
-         <li><a href="#makefile">Makefile</a></li>  
+        <li><a href="#makefile">Makefile</a></li>  
         <li><a href="#conclusao">Conclusão</a></li>
         <li><a href="#referencia">Referências</a></li>
   </ul>
 </div>
-
-
-<div align="justify" id="equipamentos"> 
-<h2> Descrição dos Equipamentos e Software Utilizados</h2>
-
-Nesta seção, são apresentados os equipamentos e software utilizados durante o desenvolvimento do projeto.
-
-<h3>Kit de desenvolvimento DE1-SoC</h3>
-
-A placa DE1-SoC é um kit de desenvolvimento que integra um processador ARM Cortex-A9 dual-core com um FPGA Cyclone V da Intel, proporcionando uma poderosa plataforma para projetos que combinam software e hardware. Com uma ampla variedade de periféricos, como portas VGA, Ethernet, USB, e áudio, a DE1-SoC é ideal para aplicações em sistemas embarcados e FPGA. Devido à sua versatilidade, essa placa é amplamente utilizada em ambientes educacionais e de pesquisa, facilitando o aprendizado e o desenvolvimento de projetos em ambas as áreas.
-Abaixo estão os elementos utilizados na construção desse projeto:
-
-| Categoria                               | Detalhes                                       |
-| --------------------------------------- | ---------------------------------------------- |
-| **FPGA**                          | Cyclone V SoC 5CSEMA5F31C6                     |
-| Logic Elements                          | 85K                                            |
-| Memória Embarcada                      | 4,450 Kbits                                    |
-| PLLs Fracionais                         | 6                                              |
-| Controladores de Memória               | 2                                              |
-| **Configuração e Depuração**  | Dispositivo de Configuração Serial (EPCS128) |
-| On-Board                                | USB Blaster II                                 |
-| **Memória**                      | 64MB SDRAM                                     |
-| DDR3 SDRAM                              | 1GB                                            |
-| Micro SD                                | Sim                                            |
-| **Comunicação**                 | 2 Portas USB 2.0                               |
-| Ethernet                                | 10/100/1000                                    |
-| **Display**                       | VGA DAC 24-bit                                 |
-| Entrada de Vídeo                       | Decodificador TV                               |
-| **Botões, Interruptores e LEDs** | 
-4 Teclas de Usuário (FPGA)                    |
-| 2 Botões de Reset (HPS)                |                                                |
-| **Energia**                       | Entrada DC 12V                                 |
-
-<h3> Linguagem C</h3>
-A linguagem C foi escolhida por sua eficiência, portabilidade e ampla aplicação em sistemas embarcados. Com uma sintaxe simples, ela oferece controle preciso sobre o hardware, além de contar com bibliotecas padrão e ferramentas que facilitam o desenvolvimento de código compacto e otimizado, ideal para dispositivos com recursos limitados.
-
-<h3> Linguagem Assembly</h3>
-A linguagem assembly foi escolhida por sua capacidade de oferecer controle direto sobre o hardware, permitindo o máximo de otimização e eficiência em sistemas embarcados. Com uma sintaxe próxima ao código de máquina, o assembly possibilita o uso específico de registradores e instruções, aproveitando ao máximo os recursos da arquitetura ARMv7. Essa escolha é ideal para aplicações em que desempenho e controle absoluto sobre o processamento são essenciais, especialmente em dispositivos com recursos limitados, onde o gerenciamento preciso do hardware é fundamental.
-
-<h3> Compilador GNU</h3>
-
-O GCC, abreviação de "GNU Compiler Collection" (Coleção de Compiladores GNU), é uma popular distribuição de compiladores que oferece suporte a diversas linguagens de programação, como C, C++, Objective-C, Fortran e Ada. Quando executado, o GCC realiza várias etapas, incluindo pré-processamento, compilação, montagem e vinculação. Ele também disponibiliza uma ampla variedade de opções de linha de comando, permitindo que o desenvolvedor personalize o processo de compilação conforme suas necessidades específicas.
-
-<div align="justify" id="arq_CPU">
-<h2> Estrutura da Placa DE1-SoC </h2>
-
-Nesta parte, será detalhada a arquitetura da placa DE1-SoC, incluindo o processador ARM Cortex-A9, a organização dos registradores, o mapeamento dos dispositivos de entrada/saída na memória, o uso da memória, a comunicação entre o processador e o FPGA, além do processo de compilação nativa diretamente na placa.
-
-<h3>Resumo dos Recursos do Processador ARM Cortex-A9 </h3>
-
-O ARM Cortex-A9 é baseado em uma arquitetura RISC (Reduced Instruction Set Computing), onde operações aritméticas e lógicas são realizadas nos registradores de propósito geral. A movimentação de dados entre memória e registradores é feita através de instruções Load e Store, com comprimento de palavra de 32 bits e endereçamento em estilo little-endian.
-
-<h3>Organização dos Registradores</h3>
-
-O processador ARM Cortex-A9 contém 15 registradores de propósito geral (R0 a R14), um contador de programa (R15) e um registrador de status do programa atual (CPSR), todos com 32 bits. Dois registradores têm tratamento especial: R13 é o Stack Pointer, enquanto R14 atua como registrador de link em chamadas de sub-rotina.
-
-<h3>Instruções e Modo Thumb</h3>
-
-As instruções têm 32 bits e são armazenadas na memória com alinhamento de palavras. O conjunto de instruções Thumb oferece uma versão reduzida com instruções de 16 bits, o que diminui os requisitos de memória, algo útil em sistemas embarcados.
-
-<h3>Memória Utilizada</h3>
-
-O HPS (Hard Processor System) conta com uma interface de memória que conecta o ARM MPCORE a uma memória DDR3 de 1 GB. Esta memória serve como armazenamento de dados e programas para os processadores ARM. Organizada como 256M x 32 bits, ela pode ser acessada por palavras de 32 bits, meias palavras e bytes.
-
-<h3>Mapeamento de Dispositivos de Entrada/Saída</h3>
-
-Os dispositivos de E/S disponíveis ao processador ARM são mapeados diretamente na memória e acessados como se fossem endereços de memória, utilizando as instruções Load e Store.
-
-<h3>Interrupções de Hardware</h3>
-
-Dispositivos de E/S podem gerar interrupções de hardware, ativando as linhas de solicitação de interrupção (IRQ ou FIQ) do processador. Quando ocorre uma interrupção, o processador entra no modo de exceção correspondente e salva o estado atual do programa. Antes de retornar à execução, o endereço salvo no registrador de link deve ser decrementado em 4.
-
-<h3>Diagrama de Blocos da Placa DE1-SoC</h3>
-
-O sistema DE1-SoC é composto pelo HPS e pelo FPGA, ambos integrados no chip Cyclone V SoC. O HPS inclui um processador ARM Cortex-A9 dual-core, uma interface de memória DDR3 e periféricos. O FPGA implementa dois processadores Intel Nios II e vários periféricos conectados.
-
-<h3>Compilação Nativa na DE1-SoC</h3>
-
-A compilação nativa ocorre quando o código é compilado no mesmo sistema em que será executado. Aqui, a compilação será realizada diretamente na placa, utilizando a linha de comando do Linux e as ferramentas de compilação integradas. O comando `gcc` invoca o GNU C Compiler, um compilador de código aberto muito usado para gerar executáveis no Linux.
-
-</div>
-
 
 <div align="justify" id="Bibliotecas"> 
 
@@ -238,7 +155,6 @@ Para atender aos requisitos e simplificar o processo de compilação e execuçã
 - **Execução**: Permite iniciar o programa compilado.
 
 </div>
-
 
 <div  align="justify" id="execucao"> 
 <h2>Como usar</h2>
