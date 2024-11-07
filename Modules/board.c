@@ -4,12 +4,12 @@
  * Redefine a matriz do tabuleiro do jogo para seu estado inicial.
  *
  * Esta função percorre cada célula da matriz `boardMatrix`, que representa
- * o tabuleiro de jogo, e redefine as propriedades de cada peça (PartTetromino)
- * para indicar que estão vazias e com a cor padrão.
- * O campo `isNotEmpty` é definido como 0 (falso) e a cor é definida como
+ * o tabuleiro de jogo, e redefine as propriedades de cada peça (PartTetromino) 
+ * para indicar que estão vazias e com a cor padrão. 
+ * O campo `isNotEmpty` é definido como 0 (falso) e a cor é definida como 
  * `COLOR_WHITE`.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
  */
 
@@ -29,12 +29,12 @@ void resetBoard(PartTetromino boardMatrix[LINES][COLUMNS])
  * Verifica se o jogo terminou.
  *
  * Esta função verifica se o tetromino atual colidiu com as peças já fixadas
- * no tabuleiro. Se houver uma colisão e a posição vertical do tetromino (y)
- * for igual a 0, significa que não há mais espaço para o tetromino entrar,
- * indicando que o jogo acabou. A função retorna 1 se o jogo terminou e 0
+ * no tabuleiro. Se houver uma colisão e a posição vertical do tetromino (y) 
+ * for igual a 0, significa que não há mais espaço para o tetromino entrar, 
+ * indicando que o jogo acabou. A função retorna 1 se o jogo terminou e 0 
  * caso contrário.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
  * @param tetromino Ponteiro para o tetromino atual que está em movimento.
  * @return int Retorna 1 se o jogo acabou, ou 0 se ainda está em andamento.
@@ -51,13 +51,13 @@ int checkGameOver(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromin
 /**
  * Verifica colisões entre o tetromino atual e o tabuleiro de jogo.
  *
- * Esta função percorre a matriz de padrões do tetromino para verificar se
- * há sobreposição com as peças já fixadas no tabuleiro (boardMatrix).
+ * Esta função percorre a matriz de padrões do tetromino para verificar se 
+ * há sobreposição com as peças já fixadas no tabuleiro (boardMatrix). 
  * Se qualquer parte do tetromino estiver fora dos limites do tabuleiro ou
- * se colidir com uma peça existente (indicada por `isNotEmpty`), a função
+ * se colidir com uma peça existente (indicada por `isNotEmpty`), a função 
  * retorna 1, indicando uma colisão. Se não houver colisões, retorna 0.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
  * @param tetromino Ponteiro para o tetromino atual que está sendo avaliado.
  * @return int Retorna 1 se houver colisão, ou 0 se não houver colisão.
@@ -88,14 +88,14 @@ int verifyCollision(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetrom
 /**
  * Fixa o tetromino atual no tabuleiro de jogo.
  *
- * Esta função percorre a matriz de padrões do tetromino e, para cada posição
- * que ocupa no tabuleiro, atualiza a matriz `boardMatrix` para marcar as
- * células correspondentes como ocupadas. As células são definidas como não
- * vazias (`isNotEmpty` = 1) e sua cor é atualizada para a cor do tetromino.
- * A função garante que as posições calculadas estejam dentro dos limites do
+ * Esta função percorre a matriz de padrões do tetromino e, para cada posição 
+ * que ocupa no tabuleiro, atualiza a matriz `boardMatrix` para marcar as 
+ * células correspondentes como ocupadas. As células são definidas como não 
+ * vazias (`isNotEmpty` = 1) e sua cor é atualizada para a cor do tetromino. 
+ * A função garante que as posições calculadas estejam dentro dos limites do 
  * tabuleiro antes de fazer a atualização.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
  * @param tetromino Ponteiro para o tetromino atual que está sendo fixado.
  * @param x Coordenada X onde o tetromino deve ser fixado no tabuleiro.
@@ -118,6 +118,7 @@ void fixTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromin
                 {
                     boardMatrix[posY][posX].isNotEmpty = 1;
                     boardMatrix[posY][posX].color = tetromino->color;
+    
                 }
             }
         }
@@ -127,16 +128,16 @@ void fixTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromin
 /**
  * Limpa a representação do tetromino atual no tabuleiro de jogo.
  *
- * Esta função percorre a matriz de padrões do tetromino e, para cada posição
- * que o tetromino ocupa no tabuleiro, atualiza a matriz `boardMatrix` para
- * remover a ocupação dessas células. As células são definidas como vazias
- * (`isNotEmpty` = 0) e sua cor é resetada para 0. A função verifica se as
- * posições calculadas estão dentro dos limites do tabuleiro antes de fazer
+ * Esta função percorre a matriz de padrões do tetromino e, para cada posição 
+ * que o tetromino ocupa no tabuleiro, atualiza a matriz `boardMatrix` para 
+ * remover a ocupação dessas células. As células são definidas como vazias 
+ * (`isNotEmpty` = 0) e sua cor é resetada para 0. A função verifica se as 
+ * posições calculadas estão dentro dos limites do tabuleiro antes de fazer 
  * a atualização.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
- * @param tetromino Ponteiro para o tetromino atual que deve ser limpo do
+ * @param tetromino Ponteiro para o tetromino atual que deve ser limpo do 
  *                  tabuleiro.
  */
 
@@ -164,16 +165,16 @@ void clearTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetrom
 /**
  * Remove linhas completas do tabuleiro e atualiza a pontuação.
  *
- * Esta função verifica cada linha do tabuleiro representado pela matriz
- * `boardMatrix`. Se uma linha estiver completamente preenchida (todas as
- * células `isNotEmpty` são diferentes de 0), a linha é removida, e as linhas
- * acima dela são deslocadas para baixo. A função também incrementa a pontuação
- * (`score`) sempre que uma linha é removida. Após a remoção, a nova linha superior
+ * Esta função verifica cada linha do tabuleiro representado pela matriz 
+ * `boardMatrix`. Se uma linha estiver completamente preenchida (todas as 
+ * células `isNotEmpty` são diferentes de 0), a linha é removida, e as linhas 
+ * acima dela são deslocadas para baixo. A função também incrementa a pontuação 
+ * (`score`) sempre que uma linha é removida. Após a remoção, a nova linha superior 
  * é redefinida para estar vazia.
  *
- * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo,
+ * @param boardMatrix Matriz bidimensional representando o tabuleiro do jogo, 
  *                    onde cada célula contém uma peça do tipo PartTetromino.
- * @param score Ponteiro para a pontuação atual do jogo, que será incrementada
+ * @param score Ponteiro para a pontuação atual do jogo, que será incrementada 
  *              ao remover linhas completas.
  */
 
@@ -208,9 +209,5 @@ void removeFullLines(PartTetromino boardMatrix[LINES][COLUMNS], int *score)
             }
         }
     }
-}
-
-void copyMatrix(PartTetromino destiny[LINES][COLUMNS], PartTetromino origin[LINES][COLUMNS])
-{
-    memcpy(destiny, origin, sizeof(PartTetromino) * LINES * COLUMNS);
+    videoClear();
 }

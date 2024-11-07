@@ -1,25 +1,25 @@
-.section .rodata
+	.section .rodata
+	.align 2
 DEV_MEM_PATH:
+
 	.ascii	"/dev/mem"
 	
+	.align 2
 ALT_LWFPGASLVS_OFST:
-	.word 0xFF200	
+	.word 0xFF200				
 
-.equ DATA_A, 0x80
-.equ DATA_B, 0x70
-.equ WRFULL, 0xb0
-.equ WRREG, 0xc0			
-
-.data
+	.data
+	.align 2
 virtual_base:			
 	.zero 4						
-
+	.align 2
 fd:						
 	.zero 4
 
-.text
-.global	gpuMapping
-.type	gpuMapping, %function
+	.text
+	.align 2
+	.global	gpuMapping
+	.type	gpuMapping, %function
 gpuMapping:
 
 	PUSH	{R4-R7, LR}
@@ -48,9 +48,9 @@ gpuMapping:
 	POP {R4-R7, LR}
 	BX LR
 
-
-.global closeGpuMapping  
-.type	closeGpuMapping, %function
+	.align 2
+	.global closeGpuMapping  
+	.type	closeGpuMapping, %function
 closeGpuMapping:	
 
     POP {LR}
@@ -73,49 +73,52 @@ munmap_sucesso:
     POP {LR}
     BX LR                 
 
-.global	isFull
-.type	isFull, %function
+	.align 2
+	.global	isFull
+	.type	isFull, %function
 isFull: 
    
 	PUSH {LR}
 	LDR R0, =virtual_base				
 	LDR	R0, [R0] 
-	LDR	R0, [R0, #WRFULL]    
+	LDR	R0, [R0, #0xb0]    
 	POP {LR}
     BX LR                
 
-.global	sendInstruction
-.type	sendInstruction, %function
+	.align 2
+	.global	sendInstruction
+	.type	sendInstruction, %function
 sendInstruction: 
    
 	PUSH {LR}
 	LDR R3, =virtual_base				
 	LDR	R3, [R3]                    
 
-loop_sendInstruction:
+while_sendInstruction:
 
-	LDR	R2, [R3, #WRFULL]             
+	LDR	R2, [R3, #0xb0]             
 	CMP	R2, #0                     
-	BNE	loop_sendInstruction      
+	bne	while_sendInstruction      
 	
 	MOV	R2, #0
-	STR	R2, [R3, #WRREG]             
+	STR	R2, [R3, #0xc0]             
 
-	STR	R0, [R3, #DATA_A]             
+	STR	R0, [R3, #0x80]             
 
-	STR	R1, [R3, #DATA_B]             
+	STR	R1, [R3, #0x70]             
 
 	MOV	R2, #1
-	STR	R2, [R3, #WRREG]             
+	STR	R2, [R3, #0xc0]             
 
 	MOV	R2, #0
-	STR	R2, [R3, #WRREG]          
+	STR	R2, [R3, #0xc0]            
 
 	POP	{LR}
 	BX	LR
 	
-.global	setBackgroundColor
-.type	setBackgroundColor, %function
+	.align 2
+    .global	setBackgroundColor
+    .type	setBackgroundColor, %function
 setBackgroundColor:
 
     PUSH {LR}    
@@ -132,8 +135,9 @@ setBackgroundColor:
     POP {LR}
 	BX LR
 
-.global	setBackgroundBlock
-.type	setBackgroundBlock, %function
+	.align 2
+    .global	setBackgroundBlock
+    .type	setBackgroundBlock, %function
 setBackgroundBlock:
 
 	PUSH {LR}				
@@ -158,6 +162,7 @@ setBackgroundBlock:
 	POP {LR}
     BX LR
 
+	.align 2
     .global	setSprite
     .type	setSprite, %function
 setSprite:
@@ -181,8 +186,10 @@ setSprite:
     POP {LR}
     BX LR
 
-.global	setPolygon
-.type	setPolygon, %function
+	.align 2
+    .global	setPolygon
+    .type	setPolygon, %function
+
 setPolygon:
 
 	PUSH	{LR}		
@@ -210,8 +217,10 @@ setPolygon:
     POP {LR}
     BX LR
 
-.global	buttonRead
-.type	buttonRead, %function
+	.align 2
+    .global	buttonRead
+    .type	buttonRead, %function
+
 buttonRead:
 
 	PUSH	{LR}		

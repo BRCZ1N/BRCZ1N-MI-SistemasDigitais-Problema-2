@@ -5,9 +5,9 @@
 
 /*
  * Tetromino
- *
+ * 
  * Estrutura que representa uma peça do jogo Tetris.
- *
+ * 
  * Campos:
  *  - x: Posição X da peça no tabuleiro.
  *  - y: Posição Y da peça no tabuleiro.
@@ -28,10 +28,10 @@ typedef struct
 
 /*
  * PartTetromino
- *
+ * 
  * Estrutura que representa uma parte do tabuleiro do jogo, indicando
  * se está ocupada por uma peça e qual a cor da peça presente.
- *
+ * 
  * Campos:
  *  - isNotEmpty: Indica se a célula do tabuleiro está ocupada (1) ou vazia (0).
  *  - color: Cor da parte ocupada no tabuleiro (representada por um número inteiro).

@@ -2,7 +2,7 @@
 
 /**
  * Gera uma frase na tela com caracteres individuais.
- *
+ * 
  * Esta função itera sobre uma lista de caracteres e chama a função
  * `printChar` para desenhar cada caractere em uma posição especificada.
  * Os caracteres são espaçados uniformemente, e os espaços são ignorados
@@ -33,7 +33,7 @@ void generatePhrase(int coordX, int coordY, char *list, int lenList, short color
 
 /**
  * Desenha a pontuação na tela utilizando a função `printChar`.
- *
+ * 
  * Esta função converte um número inteiro representando a pontuação
  * em uma string e desenha cada dígito na tela usando a função
  * `printChar`. Os caracteres são espaçados uniformemente, cada um
@@ -75,7 +75,7 @@ void drawScore(int coordX, int coordY, int score)
  */
 void gameField(int score, int hscore)
 {
-
+    
     char text_score[3];
     char text_hscore[3];
 
@@ -87,7 +87,7 @@ void gameField(int score, int hscore)
     printChar(15, 10, 'O', COLOR_WHITE);
     printChar(15, 15, 'R', COLOR_WHITE);
     printChar(15, 20, 'E', COLOR_WHITE);
-
+	
     printChar(22, 5, text_score[0], COLOR_YELLOW);
     printChar(22, 10, text_score[1], COLOR_YELLOW);
     printChar(22, 15, text_score[2], COLOR_YELLOW);
@@ -96,7 +96,7 @@ void gameField(int score, int hscore)
     printChar(30, 7, 'I', COLOR_WHITE);
     printChar(30, 12, 'G', COLOR_WHITE);
     printChar(30, 17, 'H', COLOR_WHITE);
-
+    
     printChar(37, 5, text_hscore[0], COLOR_YELLOW);
     printChar(37, 10, text_hscore[1], COLOR_YELLOW);
     printChar(37, 15, text_hscore[2], COLOR_YELLOW);
@@ -118,6 +118,7 @@ void gameOver()
     printChar(30, 7, 'V', COLOR_YELLOW);
     printChar(30, 12, 'E', COLOR_YELLOW);
     printChar(30, 17, 'R', COLOR_YELLOW);
+
 }
 void gamePause()
 {
@@ -127,3 +128,4 @@ void gamePause()
     printChar(40, 59, 'S', COLOR_YELLOW);
     printChar(50, 59, 'E', COLOR_YELLOW);
 }
+
