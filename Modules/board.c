@@ -209,3 +209,8 @@ void removeFullLines(PartTetromino boardMatrix[LINES][COLUMNS], int *score)
         }
     }
 }
+
+void copyMatrix(PartTetromino destiny[LINES][COLUMNS], PartTetromino origin[LINES][COLUMNS])
+{
+    memcpy(destiny, origin, sizeof(PartTetromino) * LINES * COLUMNS);
+}

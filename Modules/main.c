@@ -50,7 +50,7 @@ void execTetris()
     srand(time(NULL));
 
     Tetromino currentTetromino;
-    PartTetromino boardMatrix[LINES][COLUMNS], OldboardMatrix[LINES][COLUMNS];
+    PartTetromino boardMatrix[LINES][COLUMNS], oldBoardMatrix[LINES][COLUMNS];
 
     int dx = 0, dy = 1, moved = 1, score, hscore;
     char text_over[4] = "over";
@@ -74,10 +74,10 @@ void execTetris()
 
             buttonValue = buttonRead();
 
-            clearBoard(boardMatrix);
+            //Entre aspas agora não precisa mais dar clear toda hora já que to salvando contexto zzz
+            //clearBoard(boardMatrix);
             gameField(score, hscore);
             changePauseState(&pointerStateGame, &buttonValue);
-            buttonValue = 15;
 
             if (pointerStateGame == 1)
             {
@@ -99,6 +99,7 @@ void execTetris()
                     dx = 0;
                 }
                 pthread_mutex_unlock(&lock);
+                copyMatrix(oldBoardMatrix, boardMatrix);
                 moveTetromino(boardMatrix, &currentTetromino, dx, dy, &moved);
                 dx = 0;
                 if (!moved)
@@ -107,21 +108,21 @@ void execTetris()
                     initTetromino(&currentTetromino);
                 }
                 drawTetrominoTerminal(currentTetromino);
-                drawBoard(boardMatrix);
+                drawBoard(boardMatrix, oldBoardMatrix);
                 usleep(450000);
             }
             else
             {
 
                 gamePause();
-                drawBoard(boardMatrix);
+                drawBoard(boardMatrix,oldBoardMatrix);
                 usleep(450000);
             }
 
             drawBoardTerminal(boardMatrix);
         }
 
-        drawBoard(boardMatrix);
+        drawBoard(boardMatrix,oldBoardMatrix);
         videoClear();
         gameOver();
 
@@ -130,6 +131,7 @@ void execTetris()
         {
 
             hscore = score;
+
         }
     }
     closeGpuMapping();

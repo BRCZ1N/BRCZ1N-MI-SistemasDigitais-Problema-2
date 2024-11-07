@@ -30,7 +30,7 @@ void initBoard(PartTetromino boardMatrix[LINES][COLUMNS]);
 int verifyCollision(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino);
 void fixTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino, int x, int y);
 void removeFullLines(PartTetromino boardMatrix[LINES][COLUMNS], int *score);
-void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS]);
+void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS], PartTetromino oldBoardMatrix[LINES][COLUMNS]);
 void drawBoardTerminal(PartTetromino boardMatrix[LINES][COLUMNS]);
 void drawTetrominoTerminal(Tetromino tetromino);
 void moveTetromino(PartTetromino boardMatrix[LINES][COLUMNS], Tetromino *tetromino, int dx, int dy, int *moved);
@@ -58,8 +58,8 @@ void videoClear();
 void videoBox(int initial_x, int initial_y, int end_x, int end_y, int color, int blockLength);
 int charToIndex(char c);
 void printChar(int coordX, int coordY, char caracter, short color);
-void resetoldBoard(PartTetromino boardMatrix[LINES][COLUMNS], PartTetromino oldboardMatrix[LINES][COLUMNS]);
 void gamePause();
+void copyMatrix(PartTetromino destino[LINES][COLUMNS], PartTetromino origem[LINES][COLUMNS]);
 
 // Variáveis globais para o acelerômetro
 extern int16_t axis_x;       // Eixo X do acelerômetro.

@@ -118,6 +118,7 @@ void gameOver()
     printChar(30, 7, 'V', COLOR_YELLOW);
     printChar(30, 12, 'E', COLOR_YELLOW);
     printChar(30, 17, 'R', COLOR_YELLOW);
+
 }
 void gamePause()
 {
@@ -127,4 +128,5 @@ void gamePause()
     printChar(15, 65, 'U', COLOR_YELLOW);
     printChar(15, 70, 'S', COLOR_YELLOW);
     printChar(15, 75, 'E', COLOR_YELLOW);
+    
 }
