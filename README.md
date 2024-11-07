@@ -136,7 +136,7 @@ Para iniciar o projeto, siga os passos abaixo para obter o código-fonte, compil
 
 Abra o terminal e execute o seguinte comando para obter o código do repositório:
 
-    git clone https://github.com/BRCZ1N/MI-SistemasDigitais-Problema-1.git
+    git clone https://github.com/BRCZ1N/MI-SistemasDigitais-Problema-2.git
 
 **Passo 2: Acessar o Diretório e Compilar o Código em C**
 
