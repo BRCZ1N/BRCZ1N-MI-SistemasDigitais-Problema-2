@@ -46,10 +46,6 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
   </ul>
 </div>
 
-# Projeto de Controle de GPU
-
-Este repositório contém o desenvolvimento de um código para o controle de uma GPU em uma placa FPGA. O funcionamento da GPU é baseado na arquitetura descrita no trabalho "Desenvolvimento de uma Arquitetura Baseada em Sprites para Criação de Jogos 2D em Ambientes Reconfiguráveis Utilizando Dispositivos FPGA", de Gabriel. Abaixo, são detalhadas as principais características e instruções que a GPU suporta.
-
 ## Metodologia
 
 ### Funcionamento da GPU
@@ -114,6 +110,8 @@ Funções para configurar diversos aspectos gráficos da tela, incluindo:
 - **Polígono (`setPolygon`)**: Define polígonos com propriedades específicas, como posição e tamanho, para exibição na tela.
 
 Essas funções no arquivo `GpuLib.asm` oferecem uma interface simplificada para manipulação da GPU, possibilitando o envio de comandos específicos sem a necessidade de acesso direto aos registradores e buffers FIFO.
+
+### Resultados
 
 Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo são elas: 
 
