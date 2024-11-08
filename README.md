@@ -128,7 +128,7 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
 
-Para atender aos requisitos e simplificar o processo de compilação e execução do programa em C, foi criado um `Makefile`. Este arquivo serve como uma ferramenta que automatiza a construção do projeto, facilitando o gerenciamento do processo de compilação. O `Makefile` executa as seguintes operações:
+Para atender aos requisitos e simplificar o processo de compilação e execução do projeto, foi gerado um `Makefile`. Este arquivo serve como uma ferramenta que automatiza a construção do projeto, facilitando o gerenciamento do processo de compilação. O `Makefile` executa as seguintes operações:
 
 - **Compilação**: Compila os arquivos de código-fonte em arquivos objeto.
 - **Linkagem**: Combina os arquivos objeto em um executável.
@@ -138,10 +138,9 @@ Para atender aos requisitos e simplificar o processo de compilação e execuçã
 </div>
 
 <div  align="justify" id="execucao"> 
-<h2>Como usar</h2>
+<h2>Guia de Instalação e Execução</h2>
 
-
-Para iniciar o projeto, siga os passos abaixo para obter o código-fonte, compilar o código em C e executa-lo em um dispositivo FPGA DE1-SoC. 
+Para iniciar o projeto, siga os passos abaixo para obter o código-fonte, compilar o código e executá-lo em um dispositivo FPGA DE1-SoC.
 
 **Passo 1: Clonar o Repositório**
 
@@ -149,11 +148,11 @@ Abra o terminal e execute o seguinte comando para obter o código do repositóri
 
     git clone https://github.com/BRCZ1N/MI-SistemasDigitais-Problema-2.git
 
-**Passo 2: Acessar o Diretório e Compilar o Código em C**
+**Passo 2: Acessar o Diretório**
 
-    cd MI-SistemasDigitais-Problema-1\Modules
+    cd MI-SistemasDigitais-Problema-2\Modules
 
-Compile e execute o código usando o comando:
+**Passo 3: Compile e execute o código usando o comando:**
 
     make 
 
