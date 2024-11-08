@@ -123,6 +123,19 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
     <img src="gifsProjeto/funcionamento.gif" alt="Demonstração da jogabilidade do jogo." />
     <p>Demonstração da jogabilidade do jogo.</p>
 </div>
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/pause" alt="Demonstração da marcação de pontos." />
+    <p>Demonstração da função de pause.</p>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/pontuacao.gif" alt="Demonstração da marcação de pontos." />
+    <p>Demonstração da pontuação.</p>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/gameOver.gif" alt="Demonstração da marcação de pontos." />
+    <p>Demonstração do game over.</p>
+</div>
+
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
 
