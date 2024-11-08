@@ -120,7 +120,7 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 
 ##Funcionamento do jogo 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="funcionamento.gif" alt="Demonstração da jogabilidade do jogo." />
+    <img src="gifsProjeto/funcionamento.gif" alt="Demonstração da jogabilidade do jogo." />
     <p>Demonstração da jogabilidade do jogo.</p>
 </div>
 <div align="justify" id="makefile"> 
