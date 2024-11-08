@@ -104,7 +104,7 @@ Envia uma instrução para a GPU. Antes de enviar, a função verifica o status 
 
 Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
-**Cor de Fundo (`setBackgroundColor`)**: Define a cor de fundo da tela utilizando valores RGB, utilizando a instrução **WBR** para escrever a cor no registrador no banco de registradores.
+- **Cor de Fundo (`setBackgroundColor`)**: Define a cor de fundo da tela utilizando valores RGB, utilizando a instrução **WBR** para escrever a cor no registrador no banco de registradores.
 
 - **Blocos de Fundo (`setBackgroundBlock`)**: Permite configurar a cor de blocos específicos no plano de fundo da tela. Utiliza a instrução **WBM** para escrever diretamente na memória de background, alterando as cores dos blocos de 8x8 pixels.
 
