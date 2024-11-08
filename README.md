@@ -75,7 +75,7 @@ A GPU utiliza quatro instruções principais, conforme descrito abaixo:
 
 3. **WBM (0010 - Escrita na Memória de Background)**: Modifica a cor de um bloco específico no background.
 
-4. **DP (0011 - Definição de Polígono)**: Define um polígono com tamanho, cor e posição específicas, associando-o a um registrador selecionado.
+4. **DP  (0011 - Definição de Polígono)**: Define um polígono com tamanho, cor e posição específicas, associando-o a um registrador selecionado.
 
 ### Biblioteca
 
