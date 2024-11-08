@@ -104,10 +104,13 @@ Envia uma instrução para a GPU. Antes de enviar, a função verifica o status 
 
 Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
-- **Cor de Fundo (`setBackgroundColor`)**: Define a cor de fundo da tela utilizando valores RGB.
-- **Blocos de Fundo (`setBackgroundBlock`)**: Permite configurar a cor de blocos específicos no plano de fundo da tela.
-- **Sprites (`setSprite`)**: Define a posição, cor e atributos das sprites na tela.
-- **Polígono (`setPolygon`)**: Define polígonos com propriedades específicas, como posição e tamanho, para exibição na tela.
+**Cor de Fundo (`setBackgroundColor`)**: Define a cor de fundo da tela utilizando valores RGB, utilizando a instrução **WBR** para escrever a cor no registrador no banco de registradores.
+
+- **Blocos de Fundo (`setBackgroundBlock`)**: Permite configurar a cor de blocos específicos no plano de fundo da tela. Utiliza a instrução **WBM** para escrever diretamente na memória de background, alterando as cores dos blocos de 8x8 pixels.
+
+- **Sprites (`setSprite`)**: Define a posição, offset e visibilidade das sprites na tela. Usa a instrução **WBR** para configurar o registrador do sprite, ajustando sua posição, offset e o bit de ativação que controla a exibição do sprite.
+
+- **Polígono (`setPolygon`)**: Define polígonos com propriedades específicas, como posição e tamanho, para exibição na tela. Utiliza a instrução **DP** para desenhar o polígono na tela, configurando sua forma (quadrado ou triângulo), tamanho e coordenadas.
 
 Essas funções no arquivo `GpuLib.asm` oferecem uma interface simplificada para manipulação da GPU, possibilitando o envio de comandos específicos sem a necessidade de acesso direto aos registradores e buffers FIFO.
 
