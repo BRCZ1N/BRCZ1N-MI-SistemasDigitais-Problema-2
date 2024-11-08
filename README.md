@@ -81,67 +81,39 @@ A GPU utiliza quatro instruções principais, conforme descrito abaixo:
 
 4. **DP (0011 - Definição de Polígono)**: Define um polígono com tamanho, cor e posição específicas, associando-o a um registrador selecionado.
 
-### Diagrama das Instruções
+### Biblioteca
 
-- **WBR**: Referencia uma sprite no banco de registradores.
-- **WSM**: Modifica um pixel em uma sprite.
-- **WBM**: Modifica a cor de um bloco do background.
-- **DP**: Define um polígono (quadrado ou triângulo) com características específicas.
+A biblioteca foi criada com o propósito de possibilitar a interação do usuário com a GPU, facilitando o envio de instruções e dados. Ela abstrai a complexidade do acesso direto aos 
+registradores e buffers FIFO da GPU.
 
+As principais funções da biblioteca estão localizadas no arquivo `GpuLib.asm` e incluem:
 
+### Função de Mapeamento de Memória (`gpuMapping`)
 
+Responsável por abrir o dispositivo de memória e mapear o endereço base de controle da GPU. A função utiliza chamadas de sistema para abrir e mapear a memória, permitindo o acesso direto aos registradores da GPU.
 
-# Resumo da Biblioteca para Gerenciamento de GPU em Assembly
-Esta biblioteca em assembly ARMv7 foi projetada para controle direto de uma GPU implementada em FPGA, permitindo mapeamento de memória, configuração de fundo e sprites, e manipulação de polígonos. Abaixo está uma visão geral das principais funções e os endereços de memória usados para interagir com o hardware gráfico. Para realizar a comunicação com a GPU, este projeto utiliza a linguagem Assembly. O mapeamento de memória é realizado por meio de chamadas de sistema (syscalls). São utilizadas quatro syscalls específicas: `open`, passando a constante 5, para abrir o diretório `/dev/mem`; `close`, com a constante 6, para fechar o diretório; `mmap2`, com a chamada 192, uma vez que o ARMv7 não possui `mmap`; e, finalmente, `munmap` para desmapear a memória.
+### Função de Fechamento de Mapeamento (`closeGpuMapping`)
 
-<h3> Mapeamento de Memória e Controle da GPU</h3>
+Finaliza o mapeamento de memória, liberando os recursos e fechando o descritor de arquivo do dispositivo. Garante que a memória mapeada seja liberada corretamente, evitando erros em caso de múltiplas chamadas.
 
-- `gpuMapping`: Configura o mapeamento da GPU, acessando o endereço /dev/mem para acesso direto ao hardware. Endereço base: `0xFF200000` (definido como `ALT_LWFPGASLVS_OFST`), usado para o mapeamento de I/O leve da FPGA.
-- `closeGpuMapping`: Desfaz o mapeamento, liberando a memória de `virtual_base` e fechando o descritor `fd`.
+### Função de Verificação de FIFO Cheia (`isFull`)
 
-<h3>Controle da FIFO</h3>
+Verifica se o FIFO da GPU está cheio antes de enviar uma nova instrução. A função checa o estado do FIFO e retorna um valor indicando se ele está ocupado.
 
-- `isFull`:Verifica o status da FIFO, acessando o endereço `0xFF2000B0`. Retorna 0 se não está cheia.
-- `sendInstruction`:Envia instruções para a GPU, garantindo que a FIFO esteja vazia antes do envio.
-  - Endereços envolvidos:
-    - `0xFF2000B0`: Verifica o status da FIFO.
-    - `0xFF2000C0`: Controla o sinal de escrita da instrução.
-    - `0xFF200080` e `0xFF200070`: Armazenam os dados e endereços da instrução a ser enviada.
+### Função de Envio de Instruções (`sendInstruction`)
 
-<h3>Configuração do Fundo e Sprites</h3>
+Envia uma instrução para a GPU. Antes de enviar, a função verifica o status do FIFO, e, se disponível, envia as instruções apropriadas nos barramentos correspondentes(DATA_A e DATA_B) para o dispositivo.
 
-- `setBackgroundColor`: Define a cor de fundo da tela, combinando os valores RGB de três registros.
-  - Parâmetros RGB: `R0` (Red), `R1` (Green), `R2` (Blue).
-- `setBackgroundBlock`: Configura um bloco específico no fundo com uma cor, permitindo criar mosaicos no background.
-  - Endereçamento:
-    - Colunas e linhas são organizadas em blocos 8x8 para uma personalização eficiente.
-- `setSprite`: Define a posição, cor e ID de um sprite, manipulando-o diretamente em memória.
-  - Endereços de controle:
-    - `R0`, `R1`, `R2`, e `R3` para ID, posição X, posição Y e cor do sprite, respectivamente.
+### Funções de Configuração de Gráficos
 
-<h3>Configuração de Polígonos</h3>
+Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
-- `setPolygon`: Define um polígono em uma posição com cor e formato específico (quadrado ou triângulo).
-  - Parâmetros de Controle:
-    - ID e tipo do polígono, posição de referência, e cor.
+- **Cor de Fundo (`setBackgroundColor`)**: Define a cor de fundo da tela utilizando valores RGB.
+- **Blocos de Fundo (`setBackgroundBlock`)**: Permite configurar a cor de blocos específicos no plano de fundo da tela.
+- **Sprites (`setSprite`)**: Define a posição, cor e atributos das sprites na tela.
+- **Polígono (`setPolygon`)**: Define polígonos com propriedades específicas, como posição e tamanho, para exibição na tela.
 
-<h3>Endereços Utilizados</h3>
-
-- `0xFF200000`: Base de mapeamento de memória para a GPU.
-- `0xFF2000B0`: Verifica status da FIFO (usado em isFull e sendInstruction).
-- `0xFF2000C0`: Sinal de escrita para envio de instrução.
-- `0xFF200080`: Dados da instrução.
-- `0xFF200070`: Endereço de instrução.
-
-## Funções da biblioteca usadas no game
-
-A biblioteca identificada como `GpuLib` é responsável pela comunicação com o dispositivo de saída VGA. As funções utilizadas são:
-
-- `gpuMapping`: Abre o dispositivo de vídeo e mapeia.
-- `closeGpuMapping`: Fecha o dispositivo de vídeo e desmapeia.
-- `setBackgroundColor`: Define uma cor de fundo.
-- `setBackgroundBlock`: Semelhante a anterior, define uma cor de fundo, porém não para tela inteira mas sim para um bloco determinado.
-- `isFull`: Confere o status da FIFO.
+Essas funções no arquivo `GpuLib.asm` oferecem uma interface simplificada para manipulação da GPU, possibilitando o envio de comandos específicos sem a necessidade de acesso direto aos registradores e buffers FIFO.
 
 Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo são elas: 
 
@@ -150,11 +122,6 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 - `convertHexToRgb`: A função `convertHexToRgb` é necessária porque o `videoBox` recebe uma cor em formato hexadecimal RGB, enquanto nossa GPU exige um valor de 8 bits para cada componente de cor (`R`, `G` e `B`), com intensidade variando de 0 a 7. Assim, criamos essa função para converter as cores para o formato compatível com a GPU.
 - `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
 - `videoClear`: Limpa a tela.
-
-## Botões
-
-Para usar os botões, usamos mapeamento de memoria com linguagem C, 
-</div>
 
 
 <div align="justify" id="makefile"> 
