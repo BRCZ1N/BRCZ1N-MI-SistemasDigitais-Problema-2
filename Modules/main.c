@@ -52,7 +52,7 @@ void execTetris()
     Tetromino currentTetromino;
     PartTetromino boardMatrix[LINES][COLUMNS], OldboardMatrix[LINES][COLUMNS];
 
-    int dx = 0, dy = 1, moved = 1, score, hscore;
+    int dx = 0, dy = 1, moved = 1, score, hscore = 0, old_score;
     char text_over[4] = "over";
     char text_paused[6] = "paused";
     char text_game[4] = "game";
@@ -107,7 +107,12 @@ void execTetris()
                 dx = 0;
                 if (!moved)
                 {
+                    old_score = score;
                     removeFullLines(boardMatrix, &score);
+                    if(old_score != score){
+                        videoClear();
+                    }
+
                     gameField(score, hscore);
                     initTetromino(&currentTetromino);
                 }

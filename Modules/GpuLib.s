@@ -1,25 +1,20 @@
-	.section .rodata
-	.align 2
+.section .rodata
 DEV_MEM_PATH:
-
 	.ascii	"/dev/mem"
-	
-	.align 2
+
 ALT_LWFPGASLVS_OFST:
 	.word 0xFF200				
 
-	.data
-	.align 2
+.data
 virtual_base:			
 	.zero 4						
-	.align 2
+
 fd:						
 	.zero 4
 
-	.text
-	.align 2
-	.global	gpuMapping
-	.type	gpuMapping, %function
+.text
+.global	gpuMapping
+.type	gpuMapping, %function
 gpuMapping:
 
 	PUSH	{R4-R7, LR}
