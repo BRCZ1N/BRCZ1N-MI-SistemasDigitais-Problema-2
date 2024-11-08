@@ -75,7 +75,7 @@ void drawScore(int coordX, int coordY, int score)
  */
 void gameField(int score, int hscore)
 {
-
+    
     char text_score[3];
     char text_hscore[3];
 
@@ -87,7 +87,7 @@ void gameField(int score, int hscore)
     printChar(15, 10, 'O', COLOR_WHITE);
     printChar(15, 15, 'R', COLOR_WHITE);
     printChar(15, 20, 'E', COLOR_WHITE);
-
+	
     printChar(22, 5, text_score[0], COLOR_YELLOW);
     printChar(22, 10, text_score[1], COLOR_YELLOW);
     printChar(22, 15, text_score[2], COLOR_YELLOW);
@@ -122,13 +122,10 @@ void gameOver()
 }
 void gamePause()
 {
-
-    printChar(15, 55, 'P', COLOR_YELLOW);
-    printChar(15, 60, 'A', COLOR_YELLOW);
-    printChar(15, 65, 'U', COLOR_YELLOW);
-    printChar(15, 70, 'S', COLOR_YELLOW);
-    printChar(15, 75, 'E', COLOR_YELLOW);
-
-
+    printChar(10, 59, 'P', COLOR_YELLOW);
+    printChar(20, 59, 'A', COLOR_YELLOW);
+    printChar(30, 59, 'U', COLOR_YELLOW);
+    printChar(40, 59, 'S', COLOR_YELLOW);
+    printChar(50, 59, 'E', COLOR_YELLOW);
 }
 

@@ -209,4 +209,5 @@ void removeFullLines(PartTetromino boardMatrix[LINES][COLUMNS], int *score)
             }
         }
     }
+    
 }
