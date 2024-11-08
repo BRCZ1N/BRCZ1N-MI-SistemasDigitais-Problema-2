@@ -84,23 +84,23 @@ registradores e buffers FIFO da GPU.
 
 As principais funções da biblioteca estão localizadas no arquivo `GpuLib.asm` e incluem:
 
-### Função de Mapeamento de Memória (`gpuMapping`)
+#### Função de Mapeamento de Memória (`gpuMapping`)
 
 Responsável por abrir o dispositivo de memória e mapear o endereço base de controle da GPU. A função utiliza chamadas de sistema para abrir e mapear a memória, permitindo o acesso direto aos registradores da GPU.
 
-### Função de Fechamento de Mapeamento (`closeGpuMapping`)
+#### Função de Fechamento de Mapeamento (`closeGpuMapping`)
 
 Finaliza o mapeamento de memória, liberando os recursos e fechando o descritor de arquivo do dispositivo. Garante que a memória mapeada seja liberada corretamente, evitando erros em caso de múltiplas chamadas.
 
-### Função de Verificação de FIFO Cheia (`isFull`)
+#### Função de Verificação de FIFO Cheia (`isFull`)
 
 Verifica se o FIFO da GPU está cheio antes de enviar uma nova instrução. A função checa o estado do FIFO e retorna um valor indicando se ele está ocupado.
 
-### Função de Envio de Instruções (`sendInstruction`)
+#### Função de Envio de Instruções (`sendInstruction`)
 
 Envia uma instrução para a GPU. Antes de enviar, a função verifica o status do FIFO, e, se disponível, envia as instruções apropriadas nos barramentos correspondentes(DATA_A e DATA_B) para o dispositivo.
 
-### Funções de Configuração de Gráficos
+#### Funções de Configuração de Gráficos
 
 Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
