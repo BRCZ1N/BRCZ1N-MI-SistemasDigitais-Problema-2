@@ -31,15 +31,9 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 <h1 align="center"> Sumário </h1>
 <div id="sumario">
     <ul>
-        <li><a href="#equipamentos">Descrição dos Equipamentos e Software Utilizados</a></li>
-        <li><a href="#arq_CPU"> Estrutura da Placa DE1-SoC </a></li>
-        <li><a href="#Drives">Drives de Dispositivos de Entrada e Saída (E/S)</a></li>
-        <li><a href="#Acelerometro">Acelerômetro</a></li>
-        <li><a href="#Interface-Grafica">Interface do Usuário</a></li>
-        <li><a href="#Regras-de-jogo">Dinâmica e Regras de Jogo</a></li>
-        <li><a href="#Algoritmos">Algoritmos de Jogo</a></li>
-        <li><a href="#Funcionamento">Funcionamento do jogo</a></li>
-        <li><a href="#execucao"> Como Usar </a></li>
+       <li><a href="#Introdução">Introdução</a></li>
+        <li><a href="#Metodologia">Metodologia</a></li>
+        <li><a href="#Resultados">Resultados</a></li>
         <li><a href="#makefile">Makefile</a></li>  
         <li><a href="#conclusao">Conclusão</a></li>
         <li><a href="#referencia">Referências</a></li>
@@ -124,7 +118,11 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 - `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
 - `videoClear`: Limpa a tela.
 
-
+##Funcionamento do jogo 
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="funcionamento.mp4" alt="Demonstração da jogabilidade do jogo." />
+    <p>Demonstração da jogabilidade do jogo.</p>
+</div>
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
 
