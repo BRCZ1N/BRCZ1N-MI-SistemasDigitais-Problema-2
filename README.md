@@ -124,7 +124,7 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
     <p>Demonstração da jogabilidade do jogo.</p>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/pause" alt="Demonstração da marcação de pontos." />
+    <img src="gifsProjeto/pause.gif" alt="Demonstração da marcação de pontos." />
     <p>Demonstração da função de pause.</p>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
