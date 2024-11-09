@@ -33,12 +33,12 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 
 # Sumário
 
-- [Sobre o Projeto](#equipamentos)
-- [Descrição dos Equipamentos e Software Utilizados](#arq_cpu)
-- [Estrutura da Placa DE1-SoC](#drives)
-- [Metodologia](#acelerometro)
-- [Resultados](#interface-grafica)
-- [Funcionamento do Jogo](#regras-de-jogo)
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
+- [Estrutura da Placa DE1-SoC](#arq_CPU)
+- [Metodologia](#metodologia)
+- [Resultados](#resultados)
+- [Funcionamento do Jogo](#Funcionamento do Jogo)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
 - [Referências](#referencia)
