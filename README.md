@@ -307,8 +307,13 @@ Abra o terminal e execute o seguinte comando para obter o código do repositóri
 <div div align="justify" id="conclusao"> 
 <h2> Conclusão</h2>
 
-O desenvolvimento deste projeto de Tetris para a placa DE1-SoC, utilizando linguagem C, demonstrou a versatilidade e o poder de integração entre hardware e software oferecidos por essa plataforma. Ao implementar o jogo, foi possível explorar a interface gráfica transmitida via VGA, o controle responsivo utilizando um acelerômetro e botões, além da manipulação de memória e dispositivos de entrada/saída diretamente no hardware. Entretanto, não foi possível implementar recursos, tais como, rotação de tetrominos e aumento de nível com base na pontuação, esses recursos gerariam ainda mais diversidade e são possíveis de serem feitos com esse projeto base.
-O projeto proporcionou uma oportunidade  de combinar conceitos de sistemas embarcados, como controle de periféricos, algoritmos de movimentação e colisão, e lógica de geração e remoção de peças, em uma aplicação prática e divertida. A utilização da DE1-SoC permitiu expandir o conhecimento sobre FPGAs, além de aprimorar as habilidades de programação em C para sistemas com recursos limitados.
+A implementação deste projeto de Tetris na placa DE1-SoC, com uso das linguagens C e Assembly, apresentou desafios consideráveis e proporcionou um aprendizado significativo sobre mapeamento de memória em Assembly, controle de pilha de execução e integração de software com hardware.
+
+Ao concluir o trabalho, aprofundamos nosso conhecimento na comunicação entre software e hardware, consolidando a capacidade de integrá-los por meio de uma biblioteca em Assembly. Foram explorados conceitos essenciais de mapeamento e manipulação de memória no contexto da DE1-SoC, e avançamos na prática com a linguagem Assembly.
+
+Todos os requisitos estipulados foram atendidos com sucesso na interface entre HPS e FPGA e no desenvolvimento de uma biblioteca em Assembly para a GPU.
+
+Embora as funcionalidades principais do jogo tenham sido implementadas, identificamos possibilidades de melhorias, como a rotação das peças, otimização do uso do processador gráfico para uma atualização mais fluida da tela, e a adição de um botão para ajustar a velocidade das peças, entre outras.
 <li><a href="#sumario">Voltar para o inicio</a></li>
  
 </div>
