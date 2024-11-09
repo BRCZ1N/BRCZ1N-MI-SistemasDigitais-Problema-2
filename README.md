@@ -267,7 +267,7 @@ Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao
 </div>
 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/start.gif" alt="Tela inicial do jogo(Start)" />
+    <img src="gifsProjeto/game.gif" alt="Tela inicial do jogo(Start)" />
     <p>Tela inicial do jogo(Start)</p>
 </div>
 
