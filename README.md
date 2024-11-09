@@ -134,6 +134,10 @@ A compilação nativa ocorre quando o código é compilado no mesmo sistema em q
 
 ## Metodologia
 
+A metodologia deste projeto consistiu em desenvolver e adaptar uma biblioteca para interação com a GPU, simplificando o envio de instruções e dados para controle gráfico. Foram criadas funções que abstraem o acesso direto aos registradores e aos buffers FIFO da GPU, permitindo ao usuário manipular gráficos de forma intuitiva. A partir dessa biblioteca, várias funções foram adaptadas para uso no jogo, mantendo a compatibilidade com a estrutura original e garantindo uma integração otimizada com a GPU para exibição gráfica dos elementos do jogo.
+
+As etapas do projeto serão detalhadas nas sessões posteriores, onde serão demonstrados o processo de implementação das funções, os testes realizados para validar o funcionamento da biblioteca e a adaptação das funções gráficas para o ambiente de jogo. A otimização e os ajustes finais também serão discutidos, destacando as melhorias no desempenho gráfico e na interação com a GPU.
+
 ### Funcionamento da GPU
 
 Para controlar a GPU, foi necessário entender a arquitetura e os modos de comunicação desta unidade gráfica. A GPU utiliza instruções de 64 bits e se comunica através dos barramentos de dados `DATA A` e `DATA B`. Abaixo, é detalhado o funcionamento da GPU:
