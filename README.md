@@ -245,6 +245,9 @@ Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao
 
 ## Resultados e Testes
 
+Os testes confirmaram que todas as funcionalidades necessárias ao funcionamento do jogo foram implementadas corretamente e funcionam como esperado, garantindo uma interação eficiente com a GPU e exibição gráfica estável.
+
+
 </div>
 
 <div div align="justify" id="Funcionamento"> 
