@@ -9,6 +9,18 @@
 <h3 align="justify">Jogo inspirado no clássico Tetris, desenvolvido para o kit de desenvolvimento DE1-SoC utilizando linguagem C e Assembly </h3>
 
 
+# Sumário
+
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
+- [Estrutura da Placa DE1-SoC](#arq_CPU)
+- [Metodologia](#metodologia)
+- [Resultados](#resultados)
+- [Funcionamento do Jogo](#Funcionamento)
+- [Makefile](#makefile)
+- [Conclusão](#conclusao)
+- [Referências](#referencia)
+
 <div align="justify" id="sobre-o-projeto"> 
 <h2> Sobre o Projeto</h2>
 
@@ -32,18 +44,6 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
   <li><a href="https://github.com/duasck">Luis Eduardo Leite Azevedo</a></li>
 </ul>
 </div>
-
-# Sumário
-
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
-- [Estrutura da Placa DE1-SoC](#arq_CPU)
-- [Metodologia](#metodologia)
-- [Resultados](#resultados)
-- [Funcionamento do Jogo](#Funcionamento)
-- [Makefile](#makefile)
-- [Conclusão](#conclusao)
-- [Referências](#referencia)
 
 
 <div align="justify" id="equipamentos"> 
