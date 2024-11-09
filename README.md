@@ -271,6 +271,11 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
     <p>Tela inicial do jogo(Start)</p>
 </div>
 
+<div display= "flex" justify-content= "center" align="center">
+        <img src="gifsProjeto/over.gif" alt="Tela de fim de jogo(Game Over)" />
+        <p>Tela de fim de jogo(Game Over)</p>
+</div>
+
 </div>
 
 <div align="justify" id="makefile"> 
