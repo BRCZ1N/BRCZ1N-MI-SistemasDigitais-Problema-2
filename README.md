@@ -15,7 +15,7 @@
 - [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
 - [Estrutura da Placa DE1-SoC](#arq_CPU)
 - [Metodologia](#metodologia)
-- [Resultados](#resultados)
+- [Resultados e Testes](#resultados)
 - [Funcionamento do Jogo](#Funcionamento)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
@@ -245,7 +245,7 @@ Para integrar a GPU e aproveitar a nova biblioteca, foram desenvolvidas funçõe
 
 Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao mesmo tempo que preserva a estrutura e o visual do jogo original.
 
-## Resultados
+## Resultados e Testes
 
 </div>
 
