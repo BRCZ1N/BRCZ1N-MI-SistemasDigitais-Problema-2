@@ -15,7 +15,7 @@
 - [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
 - [Estrutura da Placa DE1-SoC](#arq_CPU)
 - [Metodologia](#metodologia)
-- [Resultados e Testes](#resultados_e_testes)
+- [Resultados e Testes](#Resultados_e_Testes)
 - [Funcionamento do Jogo](#Funcionamento)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
