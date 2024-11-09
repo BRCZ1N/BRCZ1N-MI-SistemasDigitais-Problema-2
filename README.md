@@ -6,8 +6,6 @@
 🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪
 </div>
 
-<h3 align="justify">Jogo inspirado no clássico Tetris, desenvolvido para o kit de desenvolvimento DE1-SoC utilizando linguagem C e Assembly </h3>
-
 
 # Sumário
 
@@ -15,7 +13,7 @@
 - [Descrição dos Equipamentos e Software Utilizados](#equipamentos)
 - [Estrutura da Placa DE1-SoC](#arq_CPU)
 - [Metodologia](#metodologia)
-- [Resultados](#resultados)
+- [Resultados e Testes](#resultados-e-testes)
 - [Funcionamento do Jogo](#Funcionamento)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
@@ -134,6 +132,10 @@ A compilação nativa ocorre quando o código é compilado no mesmo sistema em q
 
 ## Metodologia
 
+A metodologia deste projeto consistiu em desenvolver e adaptar uma biblioteca para interação com a GPU, simplificando o envio de instruções e dados para controle gráfico. Foram criadas funções que abstraem o acesso direto aos registradores e aos buffers FIFO da GPU, permitindo ao usuário manipular gráficos de forma intuitiva. A partir dessa biblioteca, várias funções foram adaptadas para uso no jogo, mantendo a compatibilidade com a estrutura original e garantindo uma integração otimizada com a GPU para exibição gráfica dos elementos do jogo.
+
+As etapas do projeto serão detalhadas nas sessões posteriores, onde serão demonstrados o processo de implementação das funções, os testes realizados para validar o funcionamento da biblioteca e a adaptação das funções gráficas para o ambiente de jogo. A otimização e os ajustes finais também serão discutidos, destacando as melhorias no desempenho gráfico e na interação com a GPU.
+
 ### Funcionamento da GPU
 
 Para controlar a GPU, foi necessário entender a arquitetura e os modos de comunicação desta unidade gráfica. A GPU utiliza instruções de 64 bits e se comunica através dos barramentos de dados `DATA A` e `DATA B`. Abaixo, é detalhado o funcionamento da GPU:
@@ -241,14 +243,15 @@ Para integrar a GPU e aproveitar a nova biblioteca, foram desenvolvidas funçõe
 
 Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao mesmo tempo que preserva a estrutura e o visual do jogo original.
 
-## Resultados
+## Resultados e Testes
+
+Os testes confirmaram que todas as funcionalidades necessárias ao funcionamento do jogo foram implementadas corretamente e funcionam como esperado, garantindo uma interação eficiente com a GPU e exibição gráfica estável.
+
 
 </div>
 
 <div div align="justify" id="Funcionamento"> 
-<h2> Funcionamento do jogo</h2>
 <div display= "flex" justify-content= "center" align="center"> 
-  
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
     <img src="gifsProjeto/funcionamento.gif" alt="Tela do jogo." />
     <p>Tela do jogo.</p>
@@ -265,7 +268,7 @@ Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao
 </div>
 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/start.gif" alt="Tela inicial do jogo(Start)" />
+    <img src="gifsProjeto/game.gif" alt="Tela inicial do jogo(Start)" />
     <p>Tela inicial do jogo(Start)</p>
 </div>
 
