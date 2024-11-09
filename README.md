@@ -157,6 +157,31 @@ A GPU utiliza quatro instruções principais, conforme descrito abaixo:
 
 4. **DP  (0011 - Definição de Polígono)**: Define um polígono com tamanho, cor e posição específicas, associando-o a um registrador selecionado.
 
+| Instrução                               | Parâmetros                             |
+|-----------------------------------------|:--------------------------------------:|
+| WBR_GB                        | R, G, B                                          |
+| WBR_S                         | reg, offset, R, G, B                             |
+| WSM                           | reg, pixel, R, G, B                              |
+| WBM                           | mem_address, R, G, B                             |
+| DP                      | address, ref_point_x, ref_point_y, size, R, G, B, shape|
+
+
+|            Variável            |      Significado      | Intervalo |
+| :------------------------------------: | :----------------: |:----------------: |
+| R | Intensidade do vermelho | 0 - 7 |
+| G | Intensidade do verde | 0 - 7 |
+| B | Intensidade do azul | 0 - 7 |
+| X | Coordenada em relação ao eixo X | 0 - 640 |
+| Y | Coordenada em relação ao eixo Y | 0 - 480 |
+| reg | Registrador onde os parâmetros serão armazenados | -- |
+| offset | Localização do sprite na memoria | -- |
+| onScreen | Indicação para mostrar a informação na tela ou não | 0 - 1 |
+| pixel | Endereço de um pixel na memoria de sprites | -- |
+| ref_point_x | Coordenada do ponto de referência em relação a X | -- |
+| ref_point_y | Coordenada do ponto de referência em relação a Y | -- |
+| size | Dimensão do polígono | 1 - 12 |
+| shape | Formado do polígono, podendo ser quadrado ou triangulo | 0 - 1 |
+
 ### Biblioteca
 
 A biblioteca foi criada com o propósito de possibilitar a interação do usuário com a GPU, facilitando o envio de instruções e dados. Ela abstrai a complexidade do acesso direto aos 
