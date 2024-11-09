@@ -242,7 +242,8 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 - `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
 - `videoClear`: Limpa a tela.
 
-### Funcionamento do jogo 
+<div div align="justify" id="Funcionamento"> 
+<h2> Funcionamento do jogo</h2>
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
     <img src="gifsProjeto/funcionamento.gif" alt="Demonstração da jogabilidade do jogo." />
     <p>Demonstração da jogabilidade do jogo.</p>
@@ -259,6 +260,10 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
     <img src="gifsProjeto/gameOver.gif" alt="Demonstração da marcação de pontos." />
     <p>Demonstração do game over.</p>
 </div>
+
+</div>
+
+
 
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
