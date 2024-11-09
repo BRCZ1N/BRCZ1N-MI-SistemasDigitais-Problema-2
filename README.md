@@ -1,5 +1,10 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=900&size=36&duration=2500&pause=250&color=F7F7F7&background=0D111700&center=true&vCenter=true&multiline=true&width=810&height=100&lines=Tetris+Experimental;Desafios+de+Renderiza%C3%A7%C3%A3o+com+GPU+Simples)](https://git.io/typing-svg)
 
+<h1 align="center"> 🟦🟪🟨🟥🟧<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=900&size=36&duration=2500&pause=250&color=F7F7F7&background=0D111700&center=true&vCenter=true&multiline=true&width=810&height=100&lines=Tetris+Experimental;Desafios+de+Renderiza%C3%A7%C3%A3o+com+GPU+Simples" alt="Typing SVG" /></a> 
+  🟦🟪🟨🟥🟧
+</h1>
+
+
 <h3 align="justify">Jogo inspirado no clássico Tetris, desenvolvido para o kit de desenvolvimento DE1-SoC utilizando linguagem C e Assembly </h3>
 
 
