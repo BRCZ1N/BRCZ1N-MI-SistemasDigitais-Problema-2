@@ -31,17 +31,18 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 </ul>
 </div>
 
-<h1 align="justify"> Sumário </h1>
-<div id="sumario">
-    <ul>
-       <li><a href="#Introdução">Introdução</a></li>
-        <li><a href="#Metodologia">Metodologia</a></li>
-        <li><a href="#Resultados">Resultados</a></li>
-        <li><a href="#makefile">Makefile</a></li>  
-        <li><a href="#conclusao">Conclusão</a></li>
-        <li><a href="#referencia">Referências</a></li>
-  </ul>
-</div>
+# Sumário
+
+- [Sobre o Projeto](#equipamentos)
+- [Descrição dos Equipamentos e Software Utilizados](#arq_cpu)
+- [Estrutura da Placa DE1-SoC](#drives)
+- [Metodologia](#acelerometro)
+- [Resultados](#interface-grafica)
+- [Funcionamento do Jogo](#regras-de-jogo)
+- [Makefile](#makefile)
+- [Conclusão](#conclusao)
+- [Referências](#referencia)
+
 
 <div align="justify" id="equipamentos"> 
 <h2> Descrição dos Equipamentos e Software Utilizados</h2>
