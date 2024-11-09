@@ -225,15 +225,21 @@ Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
 Essas funções no arquivo `GpuLib.asm` oferecem uma interface simplificada para manipulação da GPU, possibilitando o envio de comandos específicos sem a necessidade de acesso direto aos registradores e buffers FIFO.
 
-### Adaptação de funções do jogo anterior
+### Adaptação de Funções do Jogo Anterior
 
-Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo são elas: 
+Para integrar a GPU e aproveitar a nova biblioteca, foram desenvolvidas funções que adaptam o jogo original, mantendo sua funcionalidade e visual característicos. Essas novas funções, criadas a partir das rotinas da biblioteca `GpuLib.asm`, tornam o uso da GPU eficiente e simplificado. Abaixo, as principais funções adaptadas:
 
-- `drawBoard`: Esta função é responsável por desenhar o estado atual do tabuleiro do jogo. 
-- `videoBox`: Esta função existia na primeira versão do game, onde, ao receber coordenadas iniciais e finais (x, y) e uma cor RGB, criava blocos gráficos na tela. Para manter a compatibilidade com a estrutura original do jogo, recriamos essa função na nova versão.
-- `convertHexToRgb`: A função `convertHexToRgb` é necessária porque o `videoBox` recebe uma cor em formato hexadecimal RGB, enquanto nossa GPU exige um valor de 8 bits para cada componente de cor (`R`, `G` e `B`), com intensidade variando de 0 a 7. Assim, criamos essa função para converter as cores para o formato compatível com a GPU.
-- `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
-- `videoClear`: Limpa a tela.
+- **drawBoard**: Responsável por renderizar o estado atual do tabuleiro do jogo na tela. Utiliza as funções de configuração gráfica da GPU para ajustar a exibição conforme o progresso do jogo, garantindo uma atualização fluida dos elementos visuais.
+
+- **videoBox**: Função que existia na versão original do jogo, usada para criar blocos gráficos na tela. Com as coordenadas iniciais e finais (x, y) e uma cor RGB, essa função desenha blocos nas posições especificadas. Recriamos essa função na nova versão para garantir compatibilidade com o layout original do jogo, ajustando-a para a nova GPU.
+
+- **convertHexToRgb**: Como a função `videoBox` recebe uma cor em formato hexadecimal RGB e a GPU requer um valor de 8 bits para cada componente de cor (R, G, B) com intensidade de 0 a 7, `convertHexToRgb` converte as cores para o formato aceito pela GPU. Isso permite que as cores do jogo sejam renderizadas corretamente e de forma precisa.
+
+- **generateBox**: Gera um bloco colorido no plano de fundo, com base em coordenadas de coluna e linha (`column` e `line`). Esta função recebe valores RGB para cor e o comprimento do bloco (`length`), possibilitando a criação de padrões visuais dinâmicos no fundo do jogo.
+
+- **videoClear**: Limpa a tela, removendo todos os elementos gráficos e preparando-a para a próxima renderização. Esta função é útil para redefinir o estado visual do jogo sem a necessidade de acessar diretamente os registradores.
+
+Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao mesmo tempo que preserva a estrutura e o visual do jogo original.
 
 ## Resultados
 
