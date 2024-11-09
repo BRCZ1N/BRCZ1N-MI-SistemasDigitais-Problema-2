@@ -16,7 +16,6 @@
 - [Estrutura da Placa DE1-SoC](#arq_CPU)
 - [Metodologia](#metodologia)
 - [Resultados e Testes](#resultados-e-testes)
-- [Funcionamento do Jogo](#Funcionamento)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
 - [Referências](#referencia)
@@ -245,11 +244,9 @@ Para integrar a GPU e aproveitar a nova biblioteca, foram desenvolvidas funçõe
 
 Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao mesmo tempo que preserva a estrutura e o visual do jogo original.
 
-## Resultados e Testes
-
 </div>
 
-<div div align="justify" id="Funcionamento"> 
+<div div align="justify" id="Resultados e Testes"> 
 <h2> Funcionamento do jogo</h2>
 <div display= "flex" justify-content= "center" align="center"> 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
