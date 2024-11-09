@@ -6,8 +6,6 @@
 🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪🟨🟥🟧🟦🟪
 </div>
 
-<h3 align="justify">Jogo inspirado no clássico Tetris, desenvolvido para o kit de desenvolvimento DE1-SoC utilizando linguagem C e Assembly </h3>
-
 
 # Sumário
 
