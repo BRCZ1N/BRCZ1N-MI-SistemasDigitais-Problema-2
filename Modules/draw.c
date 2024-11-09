@@ -294,7 +294,20 @@ unsigned short char_bitmaps[37][5][4] = {
 };
 
 
-// Função para imprimir um caractere
+/**
+ * Função para imprimir um caractere na tela.
+ *
+ * Esta função desenha um caractere específico em uma posição dada (coordX, coordY)
+ * com uma cor especificada. O caractere é convertido em um índice para acessar
+ * seu bitmap correspondente, e a cor é convertida de hexadecimal para RGB.
+ * A função então itera sobre o bitmap do caractere e desenha os blocos de fundo
+ * nas posições apropriadas se o bit correspondente estiver definido.
+ *
+ * @param coordX A coordenada X onde o caractere será desenhado.
+ * @param coordY A coordenada Y onde o caractere será desenhado.
+ * @param caracter O caractere a ser desenhado.
+ * @param color A cor do caractere em formato hexadecimal.
+ */
 void printChar(int coordX, int coordY, char caracter, short color) {
     int index = charToIndex(caracter);
     Color cor = convertHexToRgb(color);
@@ -306,7 +319,20 @@ void printChar(int coordX, int coordY, char caracter, short color) {
     }
 }
 
-// Função para mapear o caractere para o índice na matriz
+/**
+ * Função para mapear o caractere para o índice na matriz.
+ *
+ * Esta função converte um caractere alfabético ou numérico em um índice
+ * correspondente para uso em uma matriz. Caracteres de 'A' a 'Z' são mapeados
+ * para índices de 0 a 25, caracteres de 'a' a 'z' são mapeados para os mesmos
+ * índices de 'A' a 'Z', e caracteres de '0' a '9' são mapeados para índices
+ * de 26 a 35. Qualquer outro caractere é considerado inválido e mapeado para
+ * o índice 36.
+ *
+ * @param c O caractere a ser mapeado.
+ * @return O índice correspondente ao caractere na matriz, ou 36 se o caractere
+ *         for inválido.
+ */
 int charToIndex(char c) {
     if (c >= 'A' && c <= 'Z') {
         return c - 'A';
@@ -351,6 +377,15 @@ void drawBoard(PartTetromino boardMatrix[LINES][COLUMNS])
     }
 }
 
+/**
+ * @brief Limpa o tabuleiro.
+ * 
+ * Esta função percorre a matriz do tabuleiro e limpa cada bloco, definindo-o como vazio.
+ * 
+ * @param boardMatrix A matriz que representa o estado do tabuleiro, onde cada
+ *                    elemento contém informações sobre o bloco, incluindo
+ *                    sua cor e se está vazio ou não.
+ */
 void clearBoard(PartTetromino boardMatrix[LINES][COLUMNS])
 {
     for (int i = 0; i < LINES; i++)
@@ -370,6 +405,19 @@ void clearBoard(PartTetromino boardMatrix[LINES][COLUMNS])
     }
 }
 
+/**
+ * @brief Gera uma caixa colorida na tela.
+ * 
+ * Esta função desenha uma caixa colorida na tela, preenchendo uma área quadrada
+ * com a cor especificada.
+ * 
+ * @param column A coluna inicial onde a caixa será desenhada.
+ * @param line A linha inicial onde a caixa será desenhada.
+ * @param R O valor da componente vermelha da cor.
+ * @param G O valor da componente verde da cor.
+ * @param B O valor da componente azul da cor.
+ * @param length O comprimento do lado da caixa.
+ */
 void generateBox(int column, int line, int R, int G, int B, int length)
 {
 
@@ -382,6 +430,14 @@ void generateBox(int column, int line, int R, int G, int B, int length)
     }
 }
 
+/**
+ * @brief Converte uma cor hexadecimal para RGB.
+ * 
+ * Esta função converte um valor de cor hexadecimal para uma estrutura RGB.
+ * 
+ * @param colorHex O valor da cor em hexadecimal.
+ * @return A estrutura de cor RGB correspondente.
+ */
 Color convertHexToRgb(int colorHex)
 {
     Color colorRgb;
@@ -393,6 +449,11 @@ Color convertHexToRgb(int colorHex)
     return colorRgb;
 }
 
+/**
+ * @brief Limpa a tela de vídeo.
+ * 
+ * Esta função percorre a tela de vídeo e limpa cada bloco, definindo-o como vazio.
+ */
 void videoClear(){
 
     for (int i = 0; i < SCREEN_X/4; i++)

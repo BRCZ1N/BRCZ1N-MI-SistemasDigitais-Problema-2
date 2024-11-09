@@ -106,9 +106,14 @@ void gameField(int score, int hscore)
     videoBox(225, 18, 230, 239, COLOR_BLUE, 1);  // Lado direito
 }
 
+/**
+ * @brief Exibe a mensagem de "Game Over" na tela.
+ * 
+ * Esta função imprime a mensagem "Game Over" na tela, utilizando caracteres
+ * amarelos em posições específicas.
+ */
 void gameOver()
 {
-
     printChar(15, 0, 'G', COLOR_YELLOW);
     printChar(15, 5, 'A', COLOR_YELLOW);
     printChar(15, 10, 'M', COLOR_YELLOW);
@@ -118,8 +123,14 @@ void gameOver()
     printChar(30, 7, 'V', COLOR_YELLOW);
     printChar(30, 12, 'E', COLOR_YELLOW);
     printChar(30, 17, 'R', COLOR_YELLOW);
-
 }
+
+/**
+ * @brief Inicializa o layout do jogo.
+ * 
+ * Esta função configura o layout inicial do jogo, desenhando os elementos
+ * necessários na tela.
+ */
 void gamePause()
 {
     printChar(10, 59, 'P', COLOR_YELLOW);
