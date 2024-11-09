@@ -237,14 +237,6 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 
 ## Resultados
 
-Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo são elas: 
-
-- `drawBoard`: Esta função é responsável por desenhar o estado atual do tabuleiro do jogo. 
-- `videoBox`: Esta função existia na primeira versão do game, onde, ao receber coordenadas iniciais e finais (x, y) e uma cor RGB, criava blocos gráficos na tela. Para manter a compatibilidade com a estrutura original do jogo, recriamos essa função na nova versão.
-- `convertHexToRgb`: A função `convertHexToRgb` é necessária porque o `videoBox` recebe uma cor em formato hexadecimal RGB, enquanto nossa GPU exige um valor de 8 bits para cada componente de cor (`R`, `G` e `B`), com intensidade variando de 0 a 7. Assim, criamos essa função para converter as cores para o formato compatível com a GPU.
-- `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
-- `videoClear`: Limpa a tela.
-
 </div>
 
 <div div align="justify" id="Funcionamento"> 
