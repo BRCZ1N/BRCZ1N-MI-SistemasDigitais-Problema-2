@@ -38,7 +38,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 - [Estrutura da Placa DE1-SoC](#arq_CPU)
 - [Metodologia](#metodologia)
 - [Resultados](#resultados)
-- [Funcionamento do Jogo](#Funcionamento do Jogo)
+- [Funcionamento do Jogo](#Funcionamento)
 - [Makefile](#makefile)
 - [Conclusão](#conclusao)
 - [Referências](#referencia)
