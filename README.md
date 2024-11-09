@@ -248,11 +248,6 @@ Essas adaptações garantem que o jogo funcione de forma otimizada com a GPU, ao
 ## Resultados e Testes
 
 </div>
-
-<div div align="justify" id="Funcionamento"> 
-<h2> Funcionamento do jogo</h2>
-<div display= "flex" justify-content= "center" align="center"> 
-  
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
     <img src="gifsProjeto/funcionamento.gif" alt="Tela do jogo." />
     <p>Tela do jogo.</p>
