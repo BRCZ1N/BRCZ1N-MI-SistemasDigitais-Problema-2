@@ -23,7 +23,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 * O código da biblioteca deve ser escrito em linguagem aseembly; 
 * A biblioteca deve conter as funções essenciais para que seja possível implementar a parte gráfica do jogo usando o Processador Gráfico;
 
-<h2>  Equipe: <br></h2>
+<h2>  Equipe <br></h2>
 <uL> 
   <li><a href="https://github.com/Oguelo">Alex da Fonseca Dantas Junior</a></li>
   <li><a href="https://github.com/BRCZ1N">Bruno Campos de Oliveira Rocha</a></li>
@@ -31,7 +31,7 @@ Os requisitos para elaboração do sistema são apresentados a seguir:
 </ul>
 </div>
 
-<h1 align="center"> Sumário </h1>
+<h1 align="justify"> Sumário </h1>
 <div id="sumario">
     <ul>
        <li><a href="#Introdução">Introdução</a></li>
