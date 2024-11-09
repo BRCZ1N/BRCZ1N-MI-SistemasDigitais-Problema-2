@@ -313,7 +313,6 @@ Ao concluir o trabalho, aprofundamos nosso conhecimento na comunicação entre s
 Todos os requisitos estipulados foram atendidos com sucesso na interface entre HPS e FPGA e no desenvolvimento de uma biblioteca em Assembly para a GPU.
 
 Embora as funcionalidades principais do jogo tenham sido implementadas, identificamos possibilidades de melhorias, como a rotação das peças, otimização do uso do processador gráfico para uma atualização mais fluida da tela, e a adição de um botão para ajustar a velocidade das peças, entre outras.
-<li><a href="#sumario">Voltar para o inicio</a></li>
  
 </div>
 
