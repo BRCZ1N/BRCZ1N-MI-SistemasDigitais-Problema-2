@@ -242,26 +242,35 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 - `generateBox`: Esta função gera um bloco colorido no fundo, posicionando-o em uma localização específica baseada em coordenadas de coluna e linha (column e line). Recebe os valores de cor em componentes RGB (`R`, `G`, `B`) e o comprimento do bloco (length).
 - `videoClear`: Limpa a tela.
 
+</div>
+
 <div div align="justify" id="Funcionamento"> 
 <h2> Funcionamento do jogo</h2>
+<div display= "flex" justify-content= "center" align="center"> 
+  
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/funcionamento.gif" alt="Demonstração da jogabilidade do jogo." />
+    <img src="gifsProjeto/funcionamento.gif" alt="Tela do jogo." />
+    <p>Tela do jogo.</p>
+</div>
+
+ <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/pause.gif" alt="Como controlar o jogo." />
+    <p>Como controlar o jogo.</p>
+</div>
+
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/pontuacao.gif" alt="Demonstração da jogabilidade do jogo." />
     <p>Demonstração da jogabilidade do jogo.</p>
 </div>
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/pause.gif" alt="Demonstração da marcação de pontos." />
-    <p>Demonstração da função de pause.</p>
-</div>
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/pontuacao.gif" alt="Demonstração da marcação de pontos." />
-    <p>Demonstração da pontuação.</p>
-</div>
-<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/gameOver.gif" alt="Demonstração da marcação de pontos." />
-    <p>Demonstração do game over.</p>
+
+<div display= "flex" justify-content= "center" align="center">
+        <img src="gifsProjeto/gameOver.gif" alt="Localização do botão na placa." />
+        <p>Localização do botão na placa.</p>
 </div>
 
 </div>
+
+
 
 
 
