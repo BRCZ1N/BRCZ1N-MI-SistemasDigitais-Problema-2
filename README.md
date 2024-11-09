@@ -257,18 +257,23 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 </div>
 
  <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/pause.gif" alt="Como controlar o jogo." />
-    <p>Como controlar o jogo.</p>
+    <img src="gifsProjeto/pause.gif" alt="Funcionalidade de pause" />
+    <p>Funcionalidade de pause</p>
 </div>
 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <img src="gifsProjeto/pontuacao.gif" alt="Demonstração da jogabilidade do jogo." />
-    <p>Demonstração da jogabilidade do jogo.</p>
+    <img src="gifsProjeto/pontuacao.gif" alt="Demonstração de pontuação" />
+    <p>Demonstração de pontuação</p>
+</div>
+
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <img src="gifsProjeto/start.gif" alt="Tela inicial do jogo(Start)" />
+    <p>Tela inicial do jogo(Start)</p>
 </div>
 
 <div display= "flex" justify-content= "center" align="center">
-        <img src="gifsProjeto/gameOver.gif" alt="Localização do botão na placa." />
-        <p>Localização do botão na placa.</p>
+        <img src="gifsProjeto/over.gif" alt="Tela de fim de jogo(Game Over)" />
+        <p>Tela de fim de jogo(Game Over)</p>
 </div>
 
 </div>
