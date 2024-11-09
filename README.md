@@ -270,10 +270,6 @@ Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo
 
 </div>
 
-
-
-
-
 <div align="justify" id="makefile"> 
 <h2>Makefile</h2>
 
