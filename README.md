@@ -225,7 +225,7 @@ Funções para configurar diversos aspectos gráficos da tela, incluindo:
 
 Essas funções no arquivo `GpuLib.asm` oferecem uma interface simplificada para manipulação da GPU, possibilitando o envio de comandos específicos sem a necessidade de acesso direto aos registradores e buffers FIFO.
 
-#### Adaptação de funções do jogo anterior
+### Adaptação de funções do jogo anterior
 
 Usando essas funções das bibliotecas desenvolvemos novas funções para o jogo são elas: 
 
